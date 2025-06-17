@@ -1,5 +1,6 @@
 import { Header } from "./components/Header";
 import { Input } from "./components/Input";
+import { Select } from "./components/Select";
 
 type Services = 'RCN' | 'PAV'
 type Fila = 'N' | 'P'
@@ -67,7 +68,6 @@ export default function App() {
             minLength={14}
             onChange={handleSanitizedCpfChange}
             placeholder="000.000.000-00"
-            required
           />
 
           <Input
@@ -80,34 +80,21 @@ export default function App() {
             required
           />
 
-          <div className='flex flex-col gap-0.5'>
-            <label className='text-sm font-bold text-gray-700' htmlFor="services">
-              Serviço
-            </label>
+          <Select
+            id="services"
+            label="Serviços"
+            optionLabel='Selecione um Serviço'
+            options={['PAV', 'RCN']}
+            required
+          />
 
-            <select
-              className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 focus:outline-none focus:rounded ease-in duration-200 text-lg text-gray-800 hover:bg-gray-200 transition-colors"
-              name="services" id="services" required>
-              <option value="">Selecione um Serviço</option>
-              <option value="PAV">PAV</option>
-              <option value="RCN">RCN</option>
-            </select>
-          </div>
-
-
-          <div className='flex flex-col gap-0.5'>
-            <label className='text-sm font-bold text-gray-700' htmlFor="fila">
-              Fila
-            </label>
-
-            <select
-              className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 focus:outline-none focus:rounded ease-in duration-200 text-lg text-gray-800 hover:bg-gray-200 transition-colors "
-              name="fila" id="fila" required>
-              <option value="">Selecione uma Fila</option>
-              <option value="N">Normal</option>
-              <option value="P">Preferencial</option>
-            </select>
-          </div>
+          <Select
+            id="fila"
+            label="Fila"
+            optionLabel='Selecione uma Fila'
+            options={['NORMAL', 'PREFERENCIAL']}
+            required
+          />
 
           <button
             id="button-form"
