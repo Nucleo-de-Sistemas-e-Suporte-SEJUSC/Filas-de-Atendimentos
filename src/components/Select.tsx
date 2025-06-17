@@ -22,7 +22,7 @@ export function Select({ id, label, optionLabel,options, ...props }: SelectProps
                 <option value="">{optionLabel}</option>
                 {
                     options.map((option) => (
-                        <option value={option}>{option}</option>
+                        <option key={option} value={option}>{option}</option>
 
                     ))
                 }
