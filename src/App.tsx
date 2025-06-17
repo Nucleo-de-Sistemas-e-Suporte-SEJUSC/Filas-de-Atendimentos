@@ -1,4 +1,5 @@
 import { Header } from "./components/Header";
+import { Input } from "./components/Input";
 
 type Services = 'RCN' | 'PAV'
 type Fila = 'N' | 'P'
@@ -17,7 +18,7 @@ export default function App() {
 
     const sanitizedName = name.value
       .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '')
-      .replace(/\s{2,}/g, ' ')           
+      .replace(/\s{2,}/g, ' ')
       .trimStart()
       .toUpperCase()
 
@@ -58,23 +59,26 @@ export default function App() {
         </section>
 
         <form onSubmit={handleSubmit} id="form" className='grid gap-10 w-full max-w-md'>
-          <div className='flex flex-col gap-0.5'>
-            <label className='text-sm font-bold text-gray-700' htmlFor="cpf">
-              CPF
-            </label>
 
-            <input className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 focus:outline-none focus:rounded ease-in duration-200
-          text-lg text-gray-800" type="text" name='cpf' id='cpf' placeholder='000.000.00-00' maxLength={14} minLength={14} required onChange={handleSanitizedCpfChange} />
-          </div>
+          <Input
+            id="cpf"
+            label="CPF"
+            maxLength={14}
+            minLength={14}
+            onChange={handleSanitizedCpfChange}
+            placeholder="000.000.000-00"
+            required
+          />
 
-          <div className='flex flex-col gap-0.5'>
-            <label className='text-sm font-bold text-gray-700' htmlFor="name">
-              Nome
-            </label>
-
-            <input className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 focus:outline-none focus:rounded ease-in duration-200
-          text-lg text-gray-800" type="text" name='name' id='name' placeholder='José da Silva Xavier' maxLength={50} minLength={25} onChange={handleSanitizedNameChange} required />
-          </div>
+          <Input
+            id="name"
+            label="Nome"
+            maxLength={50}
+            minLength={25}
+            onChange={handleSanitizedNameChange}
+            placeholder="José da Silva Xavier"
+            required
+          />
 
           <div className='flex flex-col gap-0.5'>
             <label className='text-sm font-bold text-gray-700' htmlFor="services">
