@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { HomeScreen } from "./screens/HomeScreen"
+import { FilaScreen } from "./screens/FilaScreen"
 import { Header } from "./components/Header"
-
 
 export default function App() {
 
@@ -10,6 +10,7 @@ export default function App() {
         <Header />
         <Routes>
           <Route path='/' element={<HomeScreen />} />
+          <Route path='/fila' element={<FilaScreen />} />
         </Routes>
     </BrowserRouter>
   )

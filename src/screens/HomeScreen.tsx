@@ -1,8 +1,11 @@
+import React from "react"
 import { Input } from "../components/Input"
 import { Select } from "../components/Select"
+import { Button } from "../components/Button"
+import { Modal } from "../components/Modal"
 
-type Services = 'RCN' | 'PAV'
-type Fila = 'NORMAL' | 'PREFERENCIAL'
+type Services = '' | 'RCN' | 'PAV'
+type Fila = '' | 'NORMAL' | 'PREFERENCIAL'
 
 interface FormData {
     cpf: string
@@ -12,6 +15,8 @@ interface FormData {
 }
 
 export function HomeScreen() {
+    const [isModalOpen, setIsModalOpen] = React.useState(false)
+
     const handleSanitizedNameChange = (event: React.FormEvent<HTMLInputElement>) => {
         const name = event.currentTarget
 
@@ -41,22 +46,26 @@ export function HomeScreen() {
         const formData = new FormData(form)
         const formObj = Object.fromEntries(formData.entries())
 
-        console.log(formObj) // Body da Requisição
+        setIsModalOpen(true)
         form.reset()
     }
 
     return (
-
         <>
+            {
+                isModalOpen && (
+                    <Modal onClick={() => setIsModalOpen(false)} />
+                )
+            }
+
             <main className="grid justify-items-center gap-8 bg-gray-50 mx-auto mt-24 max-w-2xl shadow-md p-8 rounded">
                 <section className="*:text-center">
-                    <h2 className="text-xl font-bold text-gray-900 pb-2">Sistema de Gerenciamento de Fila</h2>
+                    <h1 className="text-xl font-bold text-gray-900 pb-2">Sistema de Gerenciamento de Fila</h1>
                     <p className="text-base font-medium text-gray-600">Preencha os campos abaixo para gerar uma senha para o seu
                         Atendimento</p>
                 </section>
 
                 <form onSubmit={handleSubmit} id="form" className='grid gap-10 w-full max-w-md'>
-
                     <Input
                         id="cpf"
                         label="CPF"
@@ -92,12 +101,9 @@ export function HomeScreen() {
                         required
                     />
 
-                    <button
-                        id="button-form"
-                        type="submit"
-                        className='bg-blue-900 rounded-sm p-2 font-bold text-gray-200 tracking-wider cursor-pointer hover:bg-blue-800 ease-in duration-100'>
+                    <Button>
                         Gerar Senha
-                    </button>
+                    </Button>
                 </form>
             </main>
         </>
