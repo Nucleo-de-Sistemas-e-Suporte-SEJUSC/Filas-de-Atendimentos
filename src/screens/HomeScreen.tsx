@@ -3,6 +3,7 @@ import { Input } from "../components/Input"
 import { Select } from "../components/Select"
 import { Button } from "../components/Button"
 import { Modal } from "../components/Modal"
+import { api } from "../api/axios"
 
 type Services = '' | 'RCN' | 'PAV'
 type Fila = '' | 'NORMAL' | 'PREFERENCIAL'
@@ -16,8 +17,25 @@ interface FormData {
 
 export function HomeScreen() {
     const [isModalOpen, setIsModalOpen] = React.useState(false)
+    const [formValues, setFormValues] = React.useState<FormData>({
+        cpf: '',
+        name: '',
+        services: '',
+        fila: ''
+    })
 
-    const handleSanitizedNameChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const { cpf, name, services, fila } = formValues
+
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = event.currentTarget
+
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }))
+    }
+
+    const handleNameChange = (event: React.FormEvent<HTMLInputElement>) => {
         const name = event.currentTarget
 
         const sanitizedName = name.value
@@ -26,28 +44,39 @@ export function HomeScreen() {
             .trimStart()
             .toUpperCase()
 
-        name.value = sanitizedName
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            name: sanitizedName
+        }))
     }
 
-    const handleSanitizedCpfChange = (event: React.FormEvent<HTMLInputElement>) => {
-        const cpf = event.currentTarget
-        const cpfValue = cpf.value.replace(/\D/g, '')
+    const handleCpfChange = (event: React.FormEvent<HTMLInputElement>) => {
+        const rawValue = event.currentTarget.value.replace(/\D/g, '')
 
-        cpf.value = cpfValue
+        const formattedCpf = rawValue
             .replace(/^(\d{3})(\d)/, '$1.$2')
             .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
             .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
+
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            cpf: formattedCpf,
+        }))
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const form = event.currentTarget
-        const formData = new FormData(form)
-        const formObj = Object.fromEntries(formData.entries())
+        try {
+            const response = await api.post('/generate-ticket', formValues)
 
-        setIsModalOpen(true)
-        form.reset()
+            const { data } = response
+            console.log(data)
+
+            setIsModalOpen(true)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -71,7 +100,8 @@ export function HomeScreen() {
                         label="CPF"
                         maxLength={14}
                         minLength={14}
-                        onChange={handleSanitizedCpfChange}
+                        value={cpf}
+                        onChange={handleCpfChange}
                         placeholder="000.000.000-00"
                     />
 
@@ -80,7 +110,8 @@ export function HomeScreen() {
                         label="Nome"
                         maxLength={50}
                         minLength={25}
-                        onChange={handleSanitizedNameChange}
+                        value={name}
+                        onChange={handleNameChange}
                         placeholder="José da Silva Xavier"
                         required
                     />
@@ -88,16 +119,20 @@ export function HomeScreen() {
                     <Select
                         id="services"
                         label="Serviços"
+                        value={services}
                         optionLabel='Selecione um Serviço'
-                        options={['PAV', 'RCN']}
+                        options={[{ label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'PCN' }]}
+                        onChange={handleSelectChange}
                         required
                     />
 
                     <Select
                         id="fila"
                         label="Fila"
+                        value={fila}
                         optionLabel='Selecione uma Fila'
-                        options={['NORMAL', 'PREFERENCIAL']}
+                        options={[{ label: 'NORMAL', value: 'N' }, { label: 'PREFERENCIAL', value: 'P' }]}
+                        onChange={handleSelectChange}
                         required
                     />
 
