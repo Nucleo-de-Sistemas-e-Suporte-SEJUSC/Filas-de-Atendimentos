@@ -4,20 +4,38 @@ import { Select } from "../components/Select"
 import { Button } from "../components/Button"
 import { Modal } from "../components/Modal"
 import { api } from "../api/axios"
+import { toast } from "sonner"
+import { Loader } from 'lucide-react'
+import type { AxiosError } from "axios"
 
-type Services = '' | 'RCN' | 'PAV'
-type Fila = '' | 'NORMAL' | 'PREFERENCIAL'
+interface Ticket {
+    cpf: string,
+    fila: string,
+    id: number,
+    name: string
+    services: string
+    ticket_number: string
+}
 
-interface FormData {
+interface FormValues {
     cpf: string
     name: string
-    services: Services
-    fila: Fila
+    services: '' | 'RCN' | 'PAV'
+    fila: '' | 'NORMAL' | 'PREFERENCIAL'
 }
 
 export function HomeScreen() {
     const [isModalOpen, setIsModalOpen] = React.useState(false)
-    const [formValues, setFormValues] = React.useState<FormData>({
+    const [requestState, setRequestState] = React.useState<{
+        ticket: Ticket | null
+        loading: boolean
+        error: string
+    }>({
+        ticket: null,
+        loading: false,
+        error: ''
+    })
+    const [formValues, setFormValues] = React.useState<FormValues>({
         cpf: '',
         name: '',
         services: '',
@@ -25,6 +43,17 @@ export function HomeScreen() {
     })
 
     const { cpf, name, services, fila } = formValues
+    const { ticket, loading } = requestState
+
+    const handleResetForm = () => {
+        setFormValues(() => ({
+            cpf: '',
+            name: '',
+            services: '',
+            fila: ''
+        }))
+        setIsModalOpen(false)
+    }
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.currentTarget
@@ -67,23 +96,43 @@ export function HomeScreen() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
+        setRequestState((prevStates) => ({
+            ...prevStates,
+            ticket: ticket,
+            loading: true
+        }))
+
         try {
             const response = await api.post('/generate-ticket', formValues)
+            const { ticket } = response.data
 
-            const { data } = response
-            console.log(data)
+            setRequestState((prevStates) => ({
+                ...prevStates,
+                ticket: ticket,
+                loading: false
+            }))
 
             setIsModalOpen(true)
         } catch (error) {
-            console.log(error)
+            const { response } = error as AxiosError<{ message: string }>
+            setRequestState((prevStates) => ({
+                ...prevStates,
+                loading: false,
+                error: `Erro ao gerar a senha: ${response?.data.message || 'Erro desconhecido'}`
+            }))
+
+            toast.error('Error', {
+                description: response?.data.message || 'Erro desconhecido'
+            })
         }
     }
+
 
     return (
         <>
             {
                 isModalOpen && (
-                    <Modal onClick={() => setIsModalOpen(false)} />
+                    <Modal ticket={ticket} onClick={handleResetForm} />
                 )
             }
 
@@ -136,8 +185,15 @@ export function HomeScreen() {
                         required
                     />
 
-                    <Button>
-                        Gerar Senha
+                    <Button disabled={loading}>
+                        {loading ? (
+                            <span className="flex items-center gap-2">
+                                <Loader className="animate-spin w-4 h-4" />
+                                Gerando...
+                            </span>
+                        ) : (
+                            'Gerar Senha'
+                        )}
                     </Button>
                 </form>
             </main>
