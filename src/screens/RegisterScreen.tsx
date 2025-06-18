@@ -15,7 +15,7 @@ import { toast } from "sonner"
 import { Loader } from 'lucide-react'
 
 
-export function HomeScreen() {
+export function RegisterScreen() {
     const [isModalOpen, setIsModalOpen] = React.useState(false)
     const [requestState, setRequestState] = React.useState<{
         ticket: Ticket | null
@@ -117,7 +117,6 @@ export function HomeScreen() {
             })
         }
     }
-
 
     return (
         <>
