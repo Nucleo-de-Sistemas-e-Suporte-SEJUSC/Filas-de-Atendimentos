@@ -1,28 +1,19 @@
 import React from "react"
-import { Input } from "../components/Input"
-import { Select } from "../components/Select"
-import { Button } from "../components/Button"
-import { Modal } from "../components/Modal"
-import { api } from "../api/axios"
+import { 
+    Input, 
+    Select, 
+    Button, 
+    Modal 
+} from "@/components"
+import type { 
+    Ticket, 
+    FormValues 
+} from '@/interfaces'
+import { api } from "@/api/axios"
+import type { AxiosError } from "axios"
 import { toast } from "sonner"
 import { Loader } from 'lucide-react'
-import type { AxiosError } from "axios"
 
-interface Ticket {
-    cpf: string,
-    fila: string,
-    id: number,
-    name: string
-    services: string
-    ticket_number: string
-}
-
-interface FormValues {
-    cpf: string
-    name: string
-    services: '' | 'RCN' | 'PAV'
-    fila: '' | 'NORMAL' | 'PREFERENCIAL'
-}
 
 export function HomeScreen() {
     const [isModalOpen, setIsModalOpen] = React.useState(false)

@@ -1,13 +1,5 @@
-import { Button } from "./Button";
-
-interface Ticket {
-    cpf: string,
-    fila: string,
-    id: number,
-    name: string
-    services: string
-    ticket_number: string
-}
+import { Button } from "@/components";
+import type { Ticket } from '@/interfaces'
 
 type ModalProps = {
     onClick: () => void
@@ -15,7 +7,6 @@ type ModalProps = {
 }
 
 export function Modal({ ticket, onClick }: ModalProps) {
-
     return (
         <div
             onClick={onClick}
