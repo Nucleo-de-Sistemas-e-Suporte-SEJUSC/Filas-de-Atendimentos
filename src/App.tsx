@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { RegisterScreen } from "./screens/RegisterScreen"
-import { FilaScreen } from "./screens/FilaScreen"
+import { QueueScreen } from "./screens/QueueScreen"
+import { AccessScreen } from "./screens/AccessScrren"
 import { Header } from "./components/Header"
 import { Toaster } from "sonner"
 
@@ -11,7 +12,8 @@ export default function App() {
       <Header />
       <Routes>
         <Route path='/' element={<RegisterScreen />} />
-        <Route path='/fila' element={<FilaScreen />} />
+        <Route path='/fila' element={<QueueScreen />} />
+        <Route path='/acesso' element={<AccessScreen />} />
       </Routes>
       <Toaster richColors position="top-center" />
     </BrowserRouter>

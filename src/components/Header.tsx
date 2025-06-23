@@ -19,7 +19,7 @@ export function Header() {
         after:absolute after:bottom-0 after:left-0
          after:h-0.5 after:w-full after:bg-blue-800
          after:origin-left after:scale-x-0 hover:after:scale-x-100
-         after:transition-transform after:duration-200 after:ease-in" to="/">
+         after:transition-transform after:duration-200 after:ease-in" to="/acesso">
                     Acesso
                 </Link>
             </nav>

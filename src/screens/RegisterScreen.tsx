@@ -1,13 +1,13 @@
 import React from "react"
-import { 
-    Input, 
-    Select, 
-    Button, 
-    Modal 
+import {
+    Input,
+    Select,
+    Button,
+    Modal
 } from "@/components"
-import type { 
-    Ticket, 
-    FormValues 
+import type {
+    Ticket,
+    FormValues
 } from '@/interfaces'
 import { api } from "@/api/axios"
 import type { AxiosError } from "axios"
@@ -20,11 +20,11 @@ export function RegisterScreen() {
     const [requestState, setRequestState] = React.useState<{
         ticket: Ticket | null
         loading: boolean
-        error: string
+        error: string | null
     }>({
         ticket: null,
         loading: false,
-        error: ''
+        error: null
     })
     const [formValues, setFormValues] = React.useState<FormValues>({
         cpf: '',
@@ -89,8 +89,8 @@ export function RegisterScreen() {
 
         setRequestState((prevStates) => ({
             ...prevStates,
-            ticket: ticket,
-            loading: true
+            loading: true,
+            error: null
         }))
 
         try {
@@ -160,7 +160,7 @@ export function RegisterScreen() {
                         label="Serviços"
                         value={services}
                         optionLabel='Selecione um Serviço'
-                        options={[{ label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'PCN' }]}
+                        options={[{ label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
                         onChange={handleSelectChange}
                         required
                     />
