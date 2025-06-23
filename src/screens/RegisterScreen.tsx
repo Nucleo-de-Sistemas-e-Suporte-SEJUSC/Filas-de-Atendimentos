@@ -126,7 +126,7 @@ export function RegisterScreen() {
                 )
             }
 
-            <main className="grid justify-items-center gap-8 bg-gray-50 mx-auto mt-24 max-w-2xl shadow-md p-8 rounded">
+            <main className="flex flex-col items-center gap-8 bg-gray-50 mx-auto mt-24 max-w-2xl shadow-md p-8 rounded">
                 <section className="*:text-center">
                     <h1 className="text-xl font-bold text-gray-900 pb-2">Sistema de Gerenciamento de Fila</h1>
                     <p className="text-base font-medium text-gray-600">Preencha os campos abaixo para gerar uma senha para o seu
