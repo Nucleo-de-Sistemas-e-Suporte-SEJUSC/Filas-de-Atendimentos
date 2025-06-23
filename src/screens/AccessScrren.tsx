@@ -1,6 +1,7 @@
 import React from "react"
 import { api } from "@/api/axios"
 import type { AxiosError } from "axios"
+import { Input } from "@/components"
 
 interface Attendances {
     id: number
@@ -9,6 +10,10 @@ interface Attendances {
     service: string
     queue_type: string
     ticket_number: string
+}
+
+interface Filters {
+    search: string
 }
 
 export function AccessScreen() {
@@ -22,10 +27,15 @@ export function AccessScreen() {
         error: null
     })
 
+    const [filters, setFilters] = React.useState<Filters>({
+        search: ''
+    })
+
     const { attendances, loading, error } = requestState
+    const { search } = filters
 
     React.useEffect(() => {
-        const fetchTickets = async () => {
+        const fetchListOfAttendances = async () => {
             setRequestState((prevStates) => ({
                 ...prevStates,
                 loading: true,
@@ -33,7 +43,7 @@ export function AccessScreen() {
             }))
 
             try {
-                const response = await api.get('/ticketss')
+                const response = await api.get('/tickets')
                 const data = (await response.data) as Attendances[]
                 setRequestState((prevVAlues) => ({
                     ...prevVAlues,
@@ -43,33 +53,71 @@ export function AccessScreen() {
                 const { response } = error as AxiosError<{ message: string }>
                 setRequestState((prevStates) => ({
                     ...prevStates,
-                    loading: false,
                     error: `Erro ao gerar a senha: ${response?.data.message || 'Erro desconhecido'}`
+                }))
+            } finally {
+                setRequestState((prevStates) => ({
+                    ...prevStates,
+                    loading: false,
                 }))
             }
         }
-        fetchTickets()
+        fetchListOfAttendances()
     }, [])
 
-    if (loading) <p className="text-lg">Carregando lista de atendimentos...</p>
-    if (error) <p>Erro Inesperado ocorreu</p>
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const search = event.currentTarget
+
+        setFilters((prevValues) => ({
+            ...prevValues,
+            search: search.value.toUpperCase()
+        }))
+    }
+
+    const filterListOfAttendances = () => {
+        let filteredListOfAttendances: Attendances[] | null | undefined = attendances
+
+        filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
+            return attendance.name.includes(search)
+        })
+
+        return filteredListOfAttendances
+    }
+
+    const filteredAttendances = filterListOfAttendances()
+
+    if (loading) return <p className="text-xl text-center pt-8">Carregando lista de atendimentos...</p>
+    if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
-        <main className="grid justify-items-center gap-8 bg-gray-50 mx-auto mt-24 max-w-4xl shadow-md rounded">
-            <div className="overflow-x-auto rounded shadow-lg w-full">
-                <table className="min-w-full text-left text-gray-700">
+        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-6xl rounded p-8">
+            <section className="flex flex-col gap-4 overflow-x-auto w-full">
+                <div className="max-w-max">
+                    <Input
+                        id="search"
+                        label="Pesquisa"
+                        value={search}
+                        onChange={handleSearchChange}
+                        placeholder="Pesquise por um Nome..."
+                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                    />
+                </div>
+
+                <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
                     <thead className="bg-blue-900 text-white uppercase text-xl tracking-wider">
-                        <tr className="*:px-6 *:py-3">
+                        <tr className="*:px-6 *:py-4">
                             <th scope="col">Nome</th>
+                            <th scope="col">CPF</th>
                             <th scope="col">Serviço</th>
                             <th scope="col">Fila</th>
                             <th scope="col">Senha</th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-300">
-                        {attendances && attendances.map(({ id, name, service, queue_type, ticket_number }) => (
+                    <tbody className="bg-gray-50 divide-y divide-gray-300">
+                        {filteredAttendances?.map(({ id, cpf, name, service, queue_type, ticket_number }) => (
                             <tr key={id} className="*:px-6 *:py-4 *:text-lg">
                                 <td>{name}</td>
+                                <td>{cpf ? cpf : '-/-'}</td>
                                 <td>{service}</td>
                                 <td>{queue_type}</td>
                                 <td>{ticket_number}</td>
@@ -77,8 +125,7 @@ export function AccessScreen() {
                         ))}
                     </tbody>
                 </table>
-            </div>
-
+            </section>
         </main>
     )
 }

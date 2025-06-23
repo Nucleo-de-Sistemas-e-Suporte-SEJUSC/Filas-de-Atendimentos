@@ -12,7 +12,7 @@ export function Input({ id, label, ...props }: InputProps) {
                 htmlFor={id}>
                 {label}
                 <input
-                    className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 focus:outline-none focus:rounded ease-in duration-200 text-lg font-normal text-gray-800"
+                    className="p-2 border-2 border-transparent border-b-blue-900 focus:border-blue-900 outline-none focus:rounded ease-in duration-200 text-lg font-normal text-gray-800"
                     type="text"
                     id={id}
                     name={id}

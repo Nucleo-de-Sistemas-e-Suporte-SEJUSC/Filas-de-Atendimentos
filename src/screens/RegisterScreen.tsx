@@ -55,7 +55,7 @@ export function RegisterScreen() {
         }))
     }
 
-    const handleNameChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.currentTarget
 
         const sanitizedName = name.value
@@ -70,7 +70,7 @@ export function RegisterScreen() {
         }))
     }
 
-    const handleCpfChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const handleCpfChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = event.currentTarget.value.replace(/\D/g, '')
 
         const formattedCpf = rawValue
@@ -100,7 +100,6 @@ export function RegisterScreen() {
             setRequestState((prevStates) => ({
                 ...prevStates,
                 ticket: ticket,
-                loading: false
             }))
 
             setIsModalOpen(true)
@@ -108,13 +107,16 @@ export function RegisterScreen() {
             const { response } = error as AxiosError<{ message: string }>
             setRequestState((prevStates) => ({
                 ...prevStates,
-                loading: false,
                 error: `Erro ao gerar a senha: ${response?.data.message || 'Erro desconhecido'}`
             }))
-
             toast.error('Error', {
                 description: response?.data.message || 'Erro desconhecido'
             })
+        } finally {
+            setRequestState((prevStates) => ({
+                ...prevStates,
+                loading: false,
+            }))
         }
     }
 
