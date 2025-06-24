@@ -13,3 +13,19 @@ export interface FormValues {
     services: '' | 'RCN' | 'PAV'
     fila: '' | 'NORMAL' | 'PREFERENCIAL'
 }
+
+export interface Attendances {
+    id: number
+    cpf: string
+    name: string
+    service: string
+    queue_type: string
+    ticket_number: string
+}
+
+export interface Filters {
+    searchByName: string
+    searchByTicket: string
+    services: string
+    queue: string
+}

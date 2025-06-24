@@ -2,22 +2,7 @@ import React from "react"
 import { api } from "@/api/axios"
 import type { AxiosError } from "axios"
 import { Input, Select } from "@/components"
-
-interface Attendances {
-    id: number
-    cpf: string
-    name: string
-    service: string
-    queue_type: string
-    ticket_number: string
-}
-
-interface Filters {
-    searchByName: string
-    searchByTicket: string
-    services: string
-    queue: string
-}
+import type { Attendances, Filters } from "@/interfaces"
 
 export function AccessScreen() {
     const [requestState, setRequestState] = React.useState<{
