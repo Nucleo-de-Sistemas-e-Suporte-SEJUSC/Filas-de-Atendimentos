@@ -13,7 +13,8 @@ interface Attendances {
 }
 
 interface Filters {
-    search: string
+    searchByName: string
+    searchByTicket: string
 }
 
 export function AccessScreen() {
@@ -28,11 +29,13 @@ export function AccessScreen() {
     })
 
     const [filters, setFilters] = React.useState<Filters>({
-        search: ''
+        searchByName: '',
+        searchByTicket: '',
+
     })
 
     const { attendances, loading, error } = requestState
-    const { search } = filters
+    const { searchByName, searchByTicket } = filters
 
     React.useEffect(() => {
         const fetchListOfAttendances = async () => {
@@ -66,11 +69,11 @@ export function AccessScreen() {
     }, [])
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const search = event.currentTarget
+        const { name, value } = event.currentTarget
 
         setFilters((prevValues) => ({
             ...prevValues,
-            search: search.value.toUpperCase()
+            [name]: value.toUpperCase()
         }))
     }
 
@@ -78,7 +81,11 @@ export function AccessScreen() {
         let filteredListOfAttendances: Attendances[] | null | undefined = attendances
 
         filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
-            return attendance.name.includes(search)
+            return attendance.name.includes(searchByName)
+        })
+
+        filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
+            return attendance.ticket_number.includes(searchByTicket)
         })
 
         return filteredListOfAttendances
@@ -92,13 +99,21 @@ export function AccessScreen() {
     return (
         <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-6xl rounded p-8">
             <section className="flex flex-col gap-4 overflow-x-auto w-full">
-                <div className="max-w-max">
+                <div className="flex gap-4 max-w-max">
                     <Input
-                        id="search"
-                        label="Pesquisa"
-                        value={search}
+                        id="searchByName"
+                        label="Nome"
+                        value={searchByName}
                         onChange={handleSearchChange}
                         placeholder="Pesquise por um Nome..."
+                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                    />
+                    <Input
+                        id="searchByTicket"
+                        label="Senha"
+                        value={searchByTicket}
+                        onChange={handleSearchChange}
+                        placeholder="Pesquise por uma Senha..."
                         className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                     />
                 </div>
