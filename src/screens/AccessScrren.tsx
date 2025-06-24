@@ -3,8 +3,11 @@ import { api } from "@/api/axios"
 import type { AxiosError } from "axios"
 import { Input, Select } from "@/components"
 import type { Attendances, Filters } from "@/interfaces"
+import { useAttendance } from "@/context/AttendanceContext"
+import { toast } from "sonner"
 
 export function AccessScreen() {
+    const { setAttendance } = useAttendance()
     const [requestState, setRequestState] = React.useState<{
         attendances: Attendances[] | null
         loading: boolean
@@ -73,6 +76,16 @@ export function AccessScreen() {
             ...prevValues,
             [name]: value,
         }))
+    }
+
+    const handleStartAttendance = (name: string, ticket_number: string) => {
+        setAttendance({
+            name: name,
+            ticket_number: ticket_number
+        })
+        toast.success('Atendimento Iniciado', {
+            description: `${name} ${ticket_number}`
+        })
     }
 
     const filterListOfAttendances = () => {
@@ -156,6 +169,7 @@ export function AccessScreen() {
                             <th scope="col">Serviço</th>
                             <th scope="col">Fila</th>
                             <th scope="col">Senha</th>
+                            <th scope="col">Ações</th>
                         </tr>
                     </thead>
                     <tbody className="bg-gray-50 divide-y divide-gray-300">
@@ -166,6 +180,13 @@ export function AccessScreen() {
                                 <td>{service}</td>
                                 <td>{queue_type}</td>
                                 <td>{ticket_number}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleStartAttendance(name, ticket_number)}
+                                        className="cursor-pointer p-2">
+                                        Chamar
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

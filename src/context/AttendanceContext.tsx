@@ -3,16 +3,23 @@ import React from "react";
 
 type Attendance = Pick<Attendances, 'name' | 'ticket_number'>
 
-const AttendanceContext = React.createContext<Attendance | null>(null)
+type AttendanceContext = {
+    attendance: Attendance | null
+    setAttendance: React.Dispatch<React.SetStateAction<Attendance | null>>
+}
+
+const AttendanceContext = React.createContext<AttendanceContext | null>(null)
 
 export const useAttendance = () => {
     const context = React.useContext(AttendanceContext)
-    if (context === null) throw new Error('useContext deve estar dentro do Provider')
+    if (!context) throw new Error('useAttendance deve estar dentro do AttendanceContextProvider')
     return context
 }
 
 export const AttendanceContextProvider = ({ children }: React.PropsWithChildren) => {
+    const [attendance, setAttendance] = React.useState<Attendance | null>(null)
+
     return (
-        <AttendanceContext.Provider value={{ name: 'YURI ODILON NOGUEIRA MOURA', ticket_number:  'PAV-N-001'}}>{children}</AttendanceContext.Provider>
+        <AttendanceContext.Provider value={{ attendance, setAttendance }}>{children}</AttendanceContext.Provider>
     )
 }
