@@ -1,13 +1,17 @@
 import React from "react"
 import { api } from "@/api/axios"
-import type { AxiosError } from "axios"
-import { Input, Select } from "@/components"
+import { 
+    Input, 
+    Select 
+} from "@/components"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
 import type { Attendances, Filters } from "@/interfaces"
-import { useAttendance } from "@/context/AttendanceContext"
+
+import type { AxiosError } from "axios"
 import { toast } from "sonner"
 
 export function AccessScreen() {
-    const { setAttendance } = useAttendance()
+    const { setStoredValue } = useLocalStorage<Attendances | null>('attendance', null)
     const [requestState, setRequestState] = React.useState<{
         attendances: Attendances[] | null
         loading: boolean
@@ -78,13 +82,10 @@ export function AccessScreen() {
         }))
     }
 
-    const handleStartAttendance = (name: string, ticket_number: string) => {
-        setAttendance({
-            name: name,
-            ticket_number: ticket_number
-        })
+    const handleStartAttendance = (attendance: Attendances) => {
+        setStoredValue(attendance)
         toast.success('Atendimento Iniciado', {
-            description: `${name} ${ticket_number}`
+            description: `${attendance.name} ${attendance.ticket_number}`
         })
     }
 
@@ -173,16 +174,16 @@ export function AccessScreen() {
                         </tr>
                     </thead>
                     <tbody className="bg-gray-50 divide-y divide-gray-300">
-                        {filteredAttendances?.map(({ id, cpf, name, service, queue_type, ticket_number }) => (
-                            <tr key={id} className="*:px-6 *:py-4 *:text-lg">
-                                <td>{name}</td>
-                                <td>{cpf ? cpf : '-/-'}</td>
-                                <td>{service}</td>
-                                <td>{queue_type}</td>
-                                <td>{ticket_number}</td>
+                        {filteredAttendances?.map((attendance) => (
+                            <tr key={attendance.id} className="*:px-6 *:py-4 *:text-lg">
+                                <td>{attendance.name}</td>
+                                <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
+                                <td>{attendance.service}</td>
+                                <td>{attendance.queue_type}</td>
+                                <td>{attendance.ticket_number}</td>
                                 <td>
                                     <button
-                                        onClick={() => handleStartAttendance(name, ticket_number)}
+                                        onClick={() => handleStartAttendance(attendance)}
                                         className="cursor-pointer p-2">
                                         Chamar
                                     </button>
