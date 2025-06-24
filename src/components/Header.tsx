@@ -3,7 +3,7 @@ import { Link } from "react-router";
 export function Header() {
     return (
         <header className="flex justify-between items-center p-8 bg-gray-50 shadow-md">
-            <Link to="/" className="w-32">
+            <Link to="/" className="w-42">
                 <img src="./src/assets/logo.png" alt="SEJUSC" />
             </Link>
 
