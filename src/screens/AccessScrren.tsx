@@ -122,7 +122,7 @@ export function AccessScreen() {
     if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
-        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-7xl rounded p-8">
+        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
             <section className="flex flex-col gap-4 overflow-x-auto w-full">
                 <div className="flex flex-wrap gap-4 max-w-max">
                     <Input
@@ -131,14 +131,6 @@ export function AccessScreen() {
                         value={searchByName}
                         onChange={handleSearchChange}
                         placeholder="Pesquise por um Nome..."
-                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                    />
-                    <Input
-                        id="searchByTicket"
-                        label="Senha"
-                        value={searchByTicket}
-                        onChange={handleSearchChange}
-                        placeholder="Pesquise por uma Senha..."
                         className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                     />
                     <Select
@@ -151,7 +143,7 @@ export function AccessScreen() {
                         required
                         className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                     />
-                      <Select
+                    <Select
                         id="queue"
                         label="Filas"
                         value={queue}
@@ -160,6 +152,14 @@ export function AccessScreen() {
                         onChange={handleSelectChange}
                         required
                         className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                    />
+                    <Input
+                        id="searchByTicket"
+                        label="Senha"
+                        value={searchByTicket}
+                        onChange={handleSearchChange}
+                        placeholder="Pesquise por uma Senha..."
+                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                     />
                 </div>
 
@@ -185,6 +185,7 @@ export function AccessScreen() {
                         ))}
                     </tbody>
                 </table>
+                {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
             </section>
         </main>
     )
