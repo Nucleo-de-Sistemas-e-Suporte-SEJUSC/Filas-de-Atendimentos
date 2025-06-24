@@ -1,7 +1,7 @@
 import React from "react"
 import { api } from "@/api/axios"
 import type { AxiosError } from "axios"
-import { Input } from "@/components"
+import { Input, Select } from "@/components"
 
 interface Attendances {
     id: number
@@ -15,6 +15,8 @@ interface Attendances {
 interface Filters {
     searchByName: string
     searchByTicket: string
+    services: string
+    queue: string
 }
 
 export function AccessScreen() {
@@ -31,11 +33,13 @@ export function AccessScreen() {
     const [filters, setFilters] = React.useState<Filters>({
         searchByName: '',
         searchByTicket: '',
+        services: '',
+        queue: ''
 
     })
 
     const { attendances, loading, error } = requestState
-    const { searchByName, searchByTicket } = filters
+    const { searchByName, searchByTicket, services, queue } = filters
 
     React.useEffect(() => {
         const fetchListOfAttendances = async () => {
@@ -77,6 +81,15 @@ export function AccessScreen() {
         }))
     }
 
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = event.currentTarget
+
+        setFilters((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }))
+    }
+
     const filterListOfAttendances = () => {
         let filteredListOfAttendances: Attendances[] | null | undefined = attendances
 
@@ -88,6 +101,18 @@ export function AccessScreen() {
             return attendance.ticket_number.includes(searchByTicket)
         })
 
+        if (services !== '' && services !== 'all') {
+            filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
+                return attendance.service === services
+            })
+        }
+
+        if (queue !== '' && queue !== 'all') {
+            filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
+                return attendance.queue_type === queue
+            })
+        }
+
         return filteredListOfAttendances
     }
 
@@ -97,9 +122,9 @@ export function AccessScreen() {
     if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
-        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-6xl rounded p-8">
+        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-7xl rounded p-8">
             <section className="flex flex-col gap-4 overflow-x-auto w-full">
-                <div className="flex gap-4 max-w-max">
+                <div className="flex flex-wrap gap-4 max-w-max">
                     <Input
                         id="searchByName"
                         label="Nome"
@@ -115,6 +140,26 @@ export function AccessScreen() {
                         onChange={handleSearchChange}
                         placeholder="Pesquise por uma Senha..."
                         className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                    />
+                    <Select
+                        id="services"
+                        label="Serviços"
+                        value={services}
+                        optionLabel='Selecione um Serviço'
+                        options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
+                        onChange={handleSelectChange}
+                        required
+                        className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                    />
+                      <Select
+                        id="queue"
+                        label="Filas"
+                        value={queue}
+                        optionLabel='Selecione uma Fila'
+                        options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
+                        onChange={handleSelectChange}
+                        required
+                        className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                     />
                 </div>
 
