@@ -20,6 +20,7 @@ export interface Attendances {
     name: string
     service: string
     queue_type: string
+    status: string
     ticket_number: string
 }
 

@@ -1,9 +1,9 @@
 import React from "react"
-import { api } from "@/api/axios"
-import { 
-    Input, 
-    Select 
+import {
+    Input,
+    Select
 } from "@/components"
+import { api } from "@/api/axios"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
 import type { Attendances, Filters } from "@/interfaces"
 
@@ -82,11 +82,68 @@ export function AccessScreen() {
         }))
     }
 
-    const handleStartAttendance = (attendance: Attendances) => {
+    const handleStartAttendance = async (attendance: Attendances) => {
         setStoredValue(attendance)
-        toast.success('Atendimento Iniciado', {
-            description: `${attendance.name} ${attendance.ticket_number}`
-        })
+
+        const { id } = attendance
+
+        try {
+            await api.patch(`/tickets/${id}/status`, {
+                status: 'EM ATENDIMENTO'
+            })
+            setRequestState((prevValues) => {
+                if (!prevValues.attendances) return prevValues
+
+                const updatedAttendances = prevValues.attendances?.map((attendance) => {
+                    return attendance.id === id ? { ...attendance, status: 'EM ATENDIMENTO' } : attendance
+                })
+
+                return {
+                    ...prevValues,
+                    attendances: updatedAttendances
+                }
+            })
+            toast.success('Atendimento Iniciado', {
+                description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
+            })
+        } catch (error) {
+            const { response } = error as AxiosError<{ message: string }>
+            toast.error('Error', {
+                description: response?.data.message || 'Erro desconhecido'
+            })
+        }
+    }
+
+    console.log(requestState.attendances)
+
+    const handleEndAttendance = async (attendance: Attendances) => {
+        const { id } = attendance
+
+        try {
+            await api.patch(`/tickets/${id}/status`, {
+                status: 'ATENDIDO'
+            })
+            setRequestState((prevValues) => {
+                if (!prevValues.attendances) return prevValues
+
+                const updatedAttendances = prevValues.attendances?.filter((attendance) =>
+                    attendance.id !== id
+                )
+
+                return {
+                    ...prevValues,
+                    attendances: updatedAttendances
+                }
+            })
+            toast.info('Atendimento Finalizado', {
+                description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
+            })
+        } catch (error) {
+            const { response } = error as AxiosError<{ message: string }>
+            toast.error('Error', {
+                description: response?.data.message || 'Erro desconhecido'
+            })
+        }
     }
 
     const filterListOfAttendances = () => {
@@ -170,7 +227,8 @@ export function AccessScreen() {
                             <th scope="col">Serviço</th>
                             <th scope="col">Fila</th>
                             <th scope="col">Senha</th>
-                            <th scope="col">Ações</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" className="text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody className="bg-gray-50 divide-y divide-gray-300">
@@ -181,11 +239,17 @@ export function AccessScreen() {
                                 <td>{attendance.service}</td>
                                 <td>{attendance.queue_type}</td>
                                 <td>{attendance.ticket_number}</td>
-                                <td>
+                                <td>{attendance.status}</td>
+                                <td className="flex">
                                     <button
                                         onClick={() => handleStartAttendance(attendance)}
                                         className="cursor-pointer p-2">
                                         Chamar
+                                    </button>
+                                    <button
+                                        onClick={() => handleEndAttendance(attendance)}
+                                        className="cursor-pointer p-2">
+                                        Finalizar
                                     </button>
                                 </td>
                             </tr>
