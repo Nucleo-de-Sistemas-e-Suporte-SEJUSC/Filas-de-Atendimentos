@@ -191,7 +191,7 @@ export function AccessScreen() {
                             value={searchByName}
                             onChange={handleSearchChange}
                             placeholder="Pesquise por um Nome..."
-                            className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                         />
                         <Select
                             id="services"
@@ -201,7 +201,7 @@ export function AccessScreen() {
                             options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
                             onChange={handleSelectChange}
                             required
-                            className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                         />
                         <Select
                             id="queue"
@@ -211,7 +211,7 @@ export function AccessScreen() {
                             options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
                             onChange={handleSelectChange}
                             required
-                            className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                         />
                         <Input
                             id="searchByTicket"
@@ -219,7 +219,7 @@ export function AccessScreen() {
                             value={searchByTicket}
                             onChange={handleSearchChange}
                             placeholder="Pesquise por uma Senha..."
-                            className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                         />
                     </div>
 
@@ -237,7 +237,7 @@ export function AccessScreen() {
                         </thead>
                         <tbody className="bg-gray-50 divide-y divide-gray-300">
                             {filteredAttendances?.map((attendance) => (
-                                <tr key={attendance.id} className="*:px-6 *:py-4 *:text-lg">
+                                <tr key={attendance.id} className={`*:px-6 *:py-4 *:text-lg ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}`}>
                                     <td>{attendance.name}</td>
                                     <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
                                     <td>{attendance.service}</td>

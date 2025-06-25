@@ -7,9 +7,7 @@ export function Header() {
                 <img src="./src/assets/sejusc.png" alt="SEJUSC" />
             </Link>
 
-            <h1 className="text-2xl text-center font-semibold">Secretaria de Estado de Justiça, Direitos Humanos e Cidadania</h1>
-
-            <nav className="flex gap-6 *:text-gray-800 *:font-semibold *:tracking-wider *:text-2xl *:p-2">
+            <nav className="flex gap-6 *:text-blue-950 *:font-semibold *:tracking-wider *:text-2xl *:p-2">
                 <Link to="/fila" className="relative
         after:absolute after:bottom-0 after:left-0
          after:h-0.5 after:w-full after:bg-blue-800
