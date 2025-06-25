@@ -3,9 +3,11 @@ import { Link } from "react-router";
 export function Header() {
     return (
         <header className="flex justify-between items-center p-8 bg-gray-50 shadow-md">
-            <Link to="/" className="w-42">
-                <img src="./src/assets/logo.png" alt="SEJUSC" />
+            <Link to="/" className="max-w-32">
+                <img src="./src/assets/sejusc.png" alt="SEJUSC" />
             </Link>
+
+            <h1 className="text-2xl text-center font-semibold">Secretaria de Estado de Justiça, Direitos Humanos e Cidadania</h1>
 
             <nav className="flex gap-6 *:text-gray-800 *:font-semibold *:tracking-wider *:text-2xl *:p-2">
                 <Link to="/fila" className="relative

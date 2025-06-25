@@ -1,5 +1,6 @@
 import React from "react"
 import {
+    Header,
     Input,
     Select
 } from "@/components"
@@ -178,86 +179,90 @@ export function AccessScreen() {
     if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
-        <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
-            <section className="flex flex-col gap-4 overflow-x-auto w-full">
-                <div className="flex flex-wrap gap-4 max-w-max">
-                    <Input
-                        id="searchByName"
-                        label="Nome"
-                        value={searchByName}
-                        onChange={handleSearchChange}
-                        placeholder="Pesquise por um Nome..."
-                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                    />
-                    <Select
-                        id="services"
-                        label="Serviços"
-                        value={services}
-                        optionLabel='Selecione um Serviço'
-                        options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
-                        onChange={handleSelectChange}
-                        required
-                        className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                    />
-                    <Select
-                        id="queue"
-                        label="Filas"
-                        value={queue}
-                        optionLabel='Selecione uma Fila'
-                        options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
-                        onChange={handleSelectChange}
-                        required
-                        className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                    />
-                    <Input
-                        id="searchByTicket"
-                        label="Senha"
-                        value={searchByTicket}
-                        onChange={handleSearchChange}
-                        placeholder="Pesquise por uma Senha..."
-                        className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                    />
-                </div>
+        <>
 
-                <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
-                    <thead className="bg-blue-900 text-white uppercase text-xl tracking-wider">
-                        <tr className="*:px-6 *:py-4">
-                            <th scope="col">Nome</th>
-                            <th scope="col">CPF</th>
-                            <th scope="col">Serviço</th>
-                            <th scope="col">Fila</th>
-                            <th scope="col">Senha</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" className="text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-gray-50 divide-y divide-gray-300">
-                        {filteredAttendances?.map((attendance) => (
-                            <tr key={attendance.id} className="*:px-6 *:py-4 *:text-lg">
-                                <td>{attendance.name}</td>
-                                <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
-                                <td>{attendance.service}</td>
-                                <td>{attendance.queue_type}</td>
-                                <td>{attendance.ticket_number}</td>
-                                <td>{attendance.status}</td>
-                                <td className="flex">
-                                    <button
-                                        onClick={() => handleStartAttendance(attendance)}
-                                        className="cursor-pointer p-2">
-                                        Chamar
-                                    </button>
-                                    <button
-                                        onClick={() => handleEndAttendance(attendance)}
-                                        className="cursor-pointer p-2">
-                                        Finalizar
-                                    </button>
-                                </td>
+            <Header />
+            <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
+                <section className="flex flex-col gap-4 overflow-x-auto w-full">
+                    <div className="flex flex-wrap gap-4 max-w-max">
+                        <Input
+                            id="searchByName"
+                            label="Nome"
+                            value={searchByName}
+                            onChange={handleSearchChange}
+                            placeholder="Pesquise por um Nome..."
+                            className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                        />
+                        <Select
+                            id="services"
+                            label="Serviços"
+                            value={services}
+                            optionLabel='Selecione um Serviço'
+                            options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
+                            onChange={handleSelectChange}
+                            required
+                            className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                        />
+                        <Select
+                            id="queue"
+                            label="Filas"
+                            value={queue}
+                            optionLabel='Selecione uma Fila'
+                            options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
+                            onChange={handleSelectChange}
+                            required
+                            className="border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                        />
+                        <Input
+                            id="searchByTicket"
+                            label="Senha"
+                            value={searchByTicket}
+                            onChange={handleSearchChange}
+                            placeholder="Pesquise por uma Senha..."
+                            className="border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                        />
+                    </div>
+
+                    <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
+                        <thead className="bg-blue-900 text-white uppercase text-xl tracking-wider">
+                            <tr className="*:px-6 *:py-4">
+                                <th scope="col">Nome</th>
+                                <th scope="col">CPF</th>
+                                <th scope="col">Serviço</th>
+                                <th scope="col">Fila</th>
+                                <th scope="col">Senha</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" className="text-center">Ações</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
-            </section>
-        </main>
+                        </thead>
+                        <tbody className="bg-gray-50 divide-y divide-gray-300">
+                            {filteredAttendances?.map((attendance) => (
+                                <tr key={attendance.id} className="*:px-6 *:py-4 *:text-lg">
+                                    <td>{attendance.name}</td>
+                                    <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
+                                    <td>{attendance.service}</td>
+                                    <td>{attendance.queue_type}</td>
+                                    <td>{attendance.ticket_number}</td>
+                                    <td>{attendance.status}</td>
+                                    <td className="flex">
+                                        <button
+                                            onClick={() => handleStartAttendance(attendance)}
+                                            className="cursor-pointer p-2">
+                                            Chamar
+                                        </button>
+                                        <button
+                                            onClick={() => handleEndAttendance(attendance)}
+                                            className="cursor-pointer p-2">
+                                            Finalizar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
+                </section>
+            </main>
+        </>
     )
 }

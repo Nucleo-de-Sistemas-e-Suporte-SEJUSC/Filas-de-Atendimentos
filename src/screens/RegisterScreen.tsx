@@ -3,7 +3,8 @@ import {
     Input,
     Select,
     Button,
-    Modal
+    Modal,
+    Header
 } from "@/components"
 import type {
     Ticket,
@@ -122,17 +123,17 @@ export function RegisterScreen() {
 
     return (
         <>
+            <Header />
             {
                 isModalOpen && (
                     <Modal ticket={ticket} onClick={handleResetForm} />
                 )
             }
 
-            <main className="flex flex-col items-center gap-8 bg-gray-50 mx-auto mt-24 max-w-2xl shadow-md p-8 rounded">
-                <section className="*:text-center">
-                    <h1 className="text-xl font-bold text-gray-900 pb-2">Sistema de Gerenciamento de Fila</h1>
-                    <p className="text-base font-medium text-gray-600">Preencha os campos abaixo para gerar uma senha para o seu
-                        Atendimento</p>
+            <main className="flex flex-col items-center gap-8 bg-gray-50 mx-auto mt-16 max-w-2xl shadow-md p-8 rounded">
+                <section className="*:text-center flex flex-col items-center gap-2 max-w-md">
+                    <img className="max-w-2xs" src="./src/assets/siaf.png" alt="SEJUSC" />
+                    <p className="text-base font-medium text-gray-600">Preencha os campos abaixo para gerar uma senha para o seu Atendimento</p>
                 </section>
 
                 <form onSubmit={handleSubmit} id="form" className='grid gap-10 w-full max-w-md'>
