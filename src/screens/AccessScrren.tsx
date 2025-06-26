@@ -2,7 +2,6 @@ import React from "react"
 import {
     Button,
     Header,
-    Input,
     Modal,
     Select
 } from "@/components"
@@ -12,6 +11,7 @@ import type { Attendances, Filters } from "@/interfaces"
 
 import type { AxiosError } from "axios"
 import { toast } from "sonner"
+import { FilterFields } from "@/components/FilterFields"
 
 export function AccessScreen() {
     const { setStoredValue } = useLocalStorage<Attendances | null>('attendance', null)
@@ -25,7 +25,6 @@ export function AccessScreen() {
         loading: false,
         error: null
     })
-
     const [filters, setFilters] = React.useState<Filters>({
         searchByName: '',
         searchByTicket: '',
@@ -33,9 +32,8 @@ export function AccessScreen() {
         queue: ''
 
     })
-
-    const { attendances, loading, error } = requestState
     const { searchByName, searchByTicket, services, queue } = filters
+    const { attendances, loading, error } = requestState
 
     React.useEffect(() => {
         const fetchListOfAttendances = async () => {
@@ -67,15 +65,6 @@ export function AccessScreen() {
         }
         fetchListOfAttendances()
     }, [])
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.currentTarget
-
-        setFilters((prevValues) => ({
-            ...prevValues,
-            [name]: value.toUpperCase()
-        }))
-    }
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.currentTarget
@@ -147,10 +136,6 @@ export function AccessScreen() {
         }
     }
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false)
-    }
-
     const filterListOfAttendances = () => {
         let filteredListOfAttendances: Attendances[] | null | undefined = attendances
 
@@ -186,7 +171,7 @@ export function AccessScreen() {
         <>
             {
                 isModalOpen && (
-                    <Modal onClick={handleCloseModal}>
+                    <Modal onClick={() => setIsModalOpen(false)}>
                         <div className="flex flex-col items-center">
                             <span className="text-xl text-center pb-4">Selecione um guichê em que você realizará o atendimento</span>
                             <Select
@@ -206,7 +191,7 @@ export function AccessScreen() {
                                 className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                             />
                         </div>
-                        <Button onClick={handleCloseModal}>
+                        <Button onClick={() => setIsModalOpen(false)}>
                             Fechar
                         </Button>
                     </Modal>
@@ -216,44 +201,8 @@ export function AccessScreen() {
 
             <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
                 <section className="flex flex-col gap-4 overflow-x-auto w-full">
-                    <div className="flex flex-wrap gap-4 max-w-max">
-                        <Input
-                            id="searchByName"
-                            label="Nome"
-                            value={searchByName}
-                            onChange={handleSearchChange}
-                            placeholder="Pesquise por um Nome..."
-                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                        />
-                        <Select
-                            id="services"
-                            label="Serviços"
-                            value={services}
-                            optionLabel='Selecione um Serviço'
-                            options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
-                            onChange={handleSelectChange}
-                            required
-                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                        />
-                        <Select
-                            id="queue"
-                            label="Filas"
-                            value={queue}
-                            optionLabel='Selecione uma Fila'
-                            options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
-                            onChange={handleSelectChange}
-                            required
-                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                        />
-                        <Input
-                            id="searchByTicket"
-                            label="Senha"
-                            value={searchByTicket}
-                            onChange={handleSearchChange}
-                            placeholder="Pesquise por uma Senha..."
-                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                        />
-                    </div>
+
+                    <FilterFields filters={filters} setFilters={setFilters} />
 
                     <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
                         <thead className="bg-blue-950 text-white uppercase text-xl tracking-wider">
