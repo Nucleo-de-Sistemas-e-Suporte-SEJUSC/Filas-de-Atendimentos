@@ -6,7 +6,7 @@ type Options = {
 }
 
 type SelectProps = React.ComponentProps<'select'> & {
-    label: string
+    label?: string
     optionLabel: string
     options: Options[]
 }

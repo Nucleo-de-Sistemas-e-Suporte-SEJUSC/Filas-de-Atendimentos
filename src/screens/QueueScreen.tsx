@@ -1,8 +1,12 @@
-import type { Attendances } from "@/interfaces"
 import React from "react"
+import type { Attendances } from "@/interfaces"
+
+type AttendancesWithGuiche = Attendances & {
+    guiche: string
+}
 
 export function QueueScreen() {
-    const [attendance, setAttendance] = React.useState<Attendances | null>(null)
+    const [attendance, setAttendance] = React.useState<AttendancesWithGuiche | null>(null)
 
     React.useEffect(() => {
         const syncAttendance = () => {
@@ -32,6 +36,7 @@ export function QueueScreen() {
         <main className="grid justify-items-center gap-8 bg-gray-50 mx-auto mt-64 w-max shadow-md p-8 rounded">
             <h1 className="text-8xl font-bold">{attendance.name}</h1>
             <h2 className="text-8xl font-bold">{attendance.ticket_number}</h2>
+            <h2 className="text-8xl font-bold">Guichê: {attendance.guiche}</h2>
         </main>
     )
 }

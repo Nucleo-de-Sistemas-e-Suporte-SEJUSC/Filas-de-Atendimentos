@@ -1,7 +1,7 @@
 import type React from "react"
 
 type InputProps = React.ComponentProps<'input'> & {
-    label: string
+    label?: string
 }
 
 export function Input({ id, label, ...props }: InputProps) {
