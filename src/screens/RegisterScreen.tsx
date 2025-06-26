@@ -123,12 +123,21 @@ export function RegisterScreen() {
 
     return (
         <>
-            <Header />
             {
                 isModalOpen && (
-                    <Modal ticket={ticket} onClick={handleResetForm} />
+                    <Modal onClick={handleResetForm}>
+                        <div className="grid justify-items-center">
+                            <span className="text-xl pb-2">Sua senha: </span>
+                            <h1 className="text-2xl font-semibold">{ticket?.name}</h1>
+                            <h2 className="text-2xl font-semibold">{ticket?.ticket_number}</h2>
+                        </div>
+                        <Button onClick={handleResetForm}>
+                            Finalizar
+                        </Button>
+                    </Modal>
                 )
             }
+            <Header />
 
             <main className="flex flex-col items-center gap-8 bg-gray-50 mx-auto mt-16 max-w-2xl shadow-md p-8 rounded">
                 <section className="*:text-center flex flex-col items-center gap-2 max-w-md">

@@ -1,7 +1,9 @@
 import React from "react"
 import {
+    Button,
     Header,
     Input,
+    Modal,
     Select
 } from "@/components"
 import { api } from "@/api/axios"
@@ -13,6 +15,7 @@ import { toast } from "sonner"
 
 export function AccessScreen() {
     const { setStoredValue } = useLocalStorage<Attendances | null>('attendance', null)
+    const [isModalOpen, setIsModalOpen] = React.useState(false)
     const [requestState, setRequestState] = React.useState<{
         attendances: Attendances[] | null
         loading: boolean
@@ -103,10 +106,9 @@ export function AccessScreen() {
                     ...prevValues,
                     attendances: updatedAttendances
                 }
+
             })
-            toast.success('Atendimento Iniciado', {
-                description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
-            })
+            setIsModalOpen(true)
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
             toast.error('Error', {
@@ -114,8 +116,6 @@ export function AccessScreen() {
             })
         }
     }
-
-    console.log(requestState.attendances)
 
     const handleEndAttendance = async (attendance: Attendances) => {
         const { id } = attendance
@@ -145,6 +145,10 @@ export function AccessScreen() {
                 description: response?.data.message || 'Erro desconhecido'
             })
         }
+    }
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
     }
 
     const filterListOfAttendances = () => {
@@ -180,8 +184,36 @@ export function AccessScreen() {
 
     return (
         <>
-
+            {
+                isModalOpen && (
+                    <Modal onClick={handleCloseModal}>
+                        <div className="flex flex-col items-center">
+                            <span className="text-xl text-center pb-4">Selecione um guichê em que você realizará o atendimento</span>
+                            <Select
+                                id="guiche"
+                                label="Guichê"
+                                value={services}
+                                optionLabel='Selecione um Guichê'
+                                options={[
+                                    { label: 'guichê 01', value: '01' },
+                                    { label: 'guichê 02', value: '02' },
+                                    { label: 'guichê 03', value: '03' },
+                                    { label: 'guichê 04', value: '04' },
+                                    { label: 'guichê 05', value: '06' }
+                                ]}
+                                onChange={handleSelectChange}
+                                required
+                                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                            />
+                        </div>
+                        <Button onClick={handleCloseModal}>
+                            Fechar
+                        </Button>
+                    </Modal>
+                )
+            }
             <Header />
+
             <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
                 <section className="flex flex-col gap-4 overflow-x-auto w-full">
                     <div className="flex flex-wrap gap-4 max-w-max">
@@ -224,7 +256,7 @@ export function AccessScreen() {
                     </div>
 
                     <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
-                        <thead className="bg-blue-900 text-white uppercase text-xl tracking-wider">
+                        <thead className="bg-blue-950 text-white uppercase text-xl tracking-wider">
                             <tr className="*:px-6 *:py-4">
                                 <th scope="col">Nome</th>
                                 <th scope="col">CPF</th>

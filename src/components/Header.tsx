@@ -10,14 +10,14 @@ export function Header() {
             <nav className="flex gap-6 *:text-blue-950 *:font-semibold *:tracking-wider *:text-2xl *:p-2">
                 <Link to="/fila" className="relative
         after:absolute after:bottom-0 after:left-0
-         after:h-0.5 after:w-full after:bg-blue-800
+         after:h-0.5 after:w-full after:bg-blue-950
          after:origin-left after:scale-x-0 hover:after:scale-x-100
          after:transition-transform after:duration-200 after:ease-in">
                     Fila
                 </Link>
                 <Link className="relative
         after:absolute after:bottom-0 after:left-0
-         after:h-0.5 after:w-full after:bg-blue-800
+         after:h-0.5 after:w-full after:bg-blue-950
          after:origin-left after:scale-x-0 hover:after:scale-x-100
          after:transition-transform after:duration-200 after:ease-in" to="/acesso">
                     Acesso
