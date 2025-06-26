@@ -6,15 +6,12 @@ import {
     Select
 } from "@/components"
 import { api } from "@/api/axios"
-import { useLocalStorage } from "@/hooks/useLocalStorage"
 import type { Attendances, Filters } from "@/interfaces"
-
 import type { AxiosError } from "axios"
-import { toast } from "sonner"
 import { FilterFields } from "@/components/FilterFields"
+import { Table } from "@/components/Table"
 
 export function AccessScreen() {
-    const { setStoredValue } = useLocalStorage<Attendances | null>('attendance', null)
     const [isModalOpen, setIsModalOpen] = React.useState(false)
     const [requestState, setRequestState] = React.useState<{
         attendances: Attendances[] | null
@@ -75,67 +72,6 @@ export function AccessScreen() {
         }))
     }
 
-    const handleStartAttendance = async (attendance: Attendances) => {
-        setStoredValue(attendance)
-
-        const { id } = attendance
-
-        try {
-            await api.patch(`/tickets/${id}/status`, {
-                status: 'EM ATENDIMENTO'
-            })
-            setRequestState((prevValues) => {
-                if (!prevValues.attendances) return prevValues
-
-                const updatedAttendances = prevValues.attendances?.map((attendance) => {
-                    return attendance.id === id ? { ...attendance, status: 'EM ATENDIMENTO' } : attendance
-                })
-
-                return {
-                    ...prevValues,
-                    attendances: updatedAttendances
-                }
-
-            })
-            setIsModalOpen(true)
-        } catch (error) {
-            const { response } = error as AxiosError<{ message: string }>
-            toast.error('Error', {
-                description: response?.data.message || 'Erro desconhecido'
-            })
-        }
-    }
-
-    const handleEndAttendance = async (attendance: Attendances) => {
-        const { id } = attendance
-
-        try {
-            await api.patch(`/tickets/${id}/status`, {
-                status: 'ATENDIDO'
-            })
-            setRequestState((prevValues) => {
-                if (!prevValues.attendances) return prevValues
-
-                const updatedAttendances = prevValues.attendances?.filter((attendance) =>
-                    attendance.id !== id
-                )
-
-                return {
-                    ...prevValues,
-                    attendances: updatedAttendances
-                }
-            })
-            toast.info('Atendimento Finalizado', {
-                description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
-            })
-        } catch (error) {
-            const { response } = error as AxiosError<{ message: string }>
-            toast.error('Error', {
-                description: response?.data.message || 'Erro desconhecido'
-            })
-        }
-    }
-
     const filterListOfAttendances = () => {
         let filteredListOfAttendances: Attendances[] | null | undefined = attendances
 
@@ -184,7 +120,10 @@ export function AccessScreen() {
                                     { label: 'guichê 02', value: '02' },
                                     { label: 'guichê 03', value: '03' },
                                     { label: 'guichê 04', value: '04' },
-                                    { label: 'guichê 05', value: '06' }
+                                    { label: 'guichê 05', value: '05' },
+                                    { label: 'guichê 06', value: '06' },
+                                    { label: 'guichê 07', value: '07' },
+                                    { label: 'guichê 08', value: '08' },
                                 ]}
                                 onChange={handleSelectChange}
                                 required
@@ -198,49 +137,17 @@ export function AccessScreen() {
                 )
             }
             <Header />
-
             <main className="grid justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
                 <section className="flex flex-col gap-4 overflow-x-auto w-full">
-
-                    <FilterFields filters={filters} setFilters={setFilters} />
-
-                    <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
-                        <thead className="bg-blue-950 text-white uppercase text-xl tracking-wider">
-                            <tr className="*:px-6 *:py-4">
-                                <th scope="col">Nome</th>
-                                <th scope="col">CPF</th>
-                                <th scope="col">Serviço</th>
-                                <th scope="col">Fila</th>
-                                <th scope="col">Senha</th>
-                                <th scope="col">Status</th>
-                                <th scope="col" className="text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-gray-50 divide-y divide-gray-300">
-                            {filteredAttendances?.map((attendance) => (
-                                <tr key={attendance.id} className={`*:px-6 *:py-4 *:text-lg ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}`}>
-                                    <td>{attendance.name}</td>
-                                    <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
-                                    <td>{attendance.service}</td>
-                                    <td>{attendance.queue_type}</td>
-                                    <td>{attendance.ticket_number}</td>
-                                    <td>{attendance.status}</td>
-                                    <td className="flex">
-                                        <button
-                                            onClick={() => handleStartAttendance(attendance)}
-                                            className="cursor-pointer p-2">
-                                            Chamar
-                                        </button>
-                                        <button
-                                            onClick={() => handleEndAttendance(attendance)}
-                                            className="cursor-pointer p-2">
-                                            Finalizar
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <FilterFields
+                        filters={filters}
+                        setFilters={setFilters}
+                    />
+                    <Table
+                        filteredAttendances={filteredAttendances}
+                        setRequestState={setRequestState}
+                        setIsModalOpen={setIsModalOpen}
+                    />
                     {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
                 </section>
             </main>
