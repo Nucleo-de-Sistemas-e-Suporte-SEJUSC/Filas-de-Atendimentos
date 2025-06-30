@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { RegisterScreen } from "./screens/RegisterScreen"
 import { QueueScreen } from "./screens/QueueScreen"
-import { AccessScreen } from "./screens/AccessScrren"
+import { AccessScreen } from "./screens/AccessScreen"
 import { Toaster } from "sonner"
 
 export default function App() {
