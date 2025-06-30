@@ -93,7 +93,7 @@ export function AccessScreen() {
         <>
             <Header />
             <main className="grid grid-cols-[1fr_auto] justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-col items-center gap-4">
                     <FilterFields
                         filters={filters}
                         setFilters={setFilters}
@@ -112,14 +112,17 @@ export function AccessScreen() {
                     <div className="flex flex-col gap-8">
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Último</h3>
-                            <p className="text-lg">{filteredListOfAttendanceHistory && filteredListOfAttendanceHistory[0]?.name}</p>
+                            <p className="text-lg">{filteredListOfAttendanceHistory && (
+                                `${filteredListOfAttendanceHistory[0]?.name} - ${filteredListOfAttendanceHistory[0]?.service}`
+                            )}
+                            </p>
                         </div>
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Anteriores</h3>
                             <ul>
                                 {filteredListOfAttendanceHistory?.map((attendance, index) => {
                                     if (index !== 0)
-                                        return <li className="text-lg" key={attendance.id}>{attendance.name}</li>
+                                        return <li className="text-lg" key={attendance.id}>{attendance.name} - {attendance.service}</li>
                                 })}
                             </ul>
                         </div>

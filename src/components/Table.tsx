@@ -29,7 +29,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         const { value } = event.currentTarget
 
         if (!storedValue) return
-
         setStoredValue({
             ...storedValue,
             guiche: value
@@ -44,7 +43,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
             })
             setRequestState((prevValues) => {
                 if (!prevValues.attendances) return prevValues
-
                 const updatedAttendances = prevValues.attendances?.map((attendance) => {
                     return attendance.id === id ? { ...attendance, status: 'CHAMADO' } : attendance
                 })
@@ -71,7 +69,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
             })
             setRequestState((prevValues) => {
                 if (!prevValues.attendances) return prevValues
-
                 const updatedAttendances = prevValues.attendances?.map((attendance) => {
                     return attendance.id === id ? { ...attendance, status: 'EM ATENDIMENTO' } : attendance
                 })
@@ -80,8 +77,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     attendances: updatedAttendances
                 }
             })
-            setIsModalOpen(true) // isso deve ser chamado antes da requisição
-            setStoredValue(attendance)
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
             toast.error('Error', {
@@ -92,7 +87,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
 
     const handleEndAttendance = async (attendance: Attendances) => {
         const { id, status } = attendance
-
         try {
             if (status === 'CHAMADO') {
                 await api.patch(`/tickets/${id}/status`, {
@@ -100,9 +94,9 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                 })
                 setRequestState((prevValues) => {
                     if (!prevValues.attendances) return prevValues
-                    const updatedAttendances = prevValues.attendances?.filter((attendance) =>
-                        attendance.id !== id
-                    )
+                    const updatedAttendances = prevValues.attendances?.map((attendance) => {
+                        return attendance.id === id ? { ...attendance, status: 'AUSENTE' } : attendance
+                    })
                     return {
                         ...prevValues,
                         attendances: updatedAttendances
@@ -203,14 +197,15 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             <td>{attendance.queue_type}</td>
                             <td>{attendance.ticket_number}</td>
                             <td>{attendance.status}</td>
-                            <td className="flex">
-                                {attendance.status === 'AGUARDANDO' && (
+                            <td className="flex justify-center">
+                                {(attendance.status === 'AGUARDANDO' || attendance.status === 'AUSENTE') && (
                                     <button
                                         onClick={() => handleCallAttendance(attendance)}
                                         className="cursor-pointer p-2">
                                         Chamar
                                     </button>
                                 )}
+
                                 {attendance.status === 'CHAMADO' && (
                                     <>
                                         <button
@@ -224,6 +219,13 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                                             Finalizar
                                         </button>
                                     </>
+                                )}
+                                {attendance.status === 'EM ATENDIMENTO' && (
+                                    <button
+                                        onClick={() => handleEndAttendance(attendance)}
+                                        className="cursor-pointer p-2">
+                                        Finalizar
+                                    </button>
                                 )}
                             </td>
                         </tr>
