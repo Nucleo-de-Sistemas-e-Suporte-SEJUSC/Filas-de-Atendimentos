@@ -5,7 +5,7 @@ import { Button } from "./Button"
 import { api } from "@/api/axios"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
 import type { Attendances } from "@/interfaces"
-import type { AxiosError } from "axios"
+import { AxiosError } from "axios"
 import { toast } from "sonner"
 
 type AttendancesWithGuiche = Attendances & {
@@ -64,8 +64,11 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     }
 
     const handleEndAttendance = async (attendance: Attendances) => {
-        const { id } = attendance
+        const { id, status } = attendance
+
         try {
+            if (status === 'AGUARDANDO') throw new Error('Não é possível finalizar um atendimento que está em espera')
+
             await api.patch(`/tickets/${id}/status`, {
                 status: 'ATENDIDO'
             })
@@ -84,10 +87,17 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
             })
             setStoredValue(null)
         } catch (error) {
-            const { response } = error as AxiosError<{ message: string }>
-            toast.error('Error', {
-                description: response?.data.message || 'Erro desconhecido'
-            })
+            if (error instanceof AxiosError) {
+                const { response } = error as AxiosError<{ message: string }>
+                toast.error('Error', {
+                    description: response?.data.message || 'Erro desconhecido'
+                })
+            }
+            if (error instanceof Error) {
+                toast.error('Error', {
+                    description: error.message || 'Erro desconhecido'
+                })
+            }
         }
     }
 
