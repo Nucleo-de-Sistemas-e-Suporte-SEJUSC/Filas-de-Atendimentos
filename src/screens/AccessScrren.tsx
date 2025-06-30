@@ -82,18 +82,15 @@ export function AccessScreen() {
     }
     const filteredAttendances = filterListOfAttendances()
 
-    const filterListOfAttendanceHistory = attendances?.filter((attendance) => {
-        return attendance.status !== 'AGUARDANDO'
+    const filteredListOfAttendanceHistory = attendances?.filter((attendance) => {
+        return attendance.status === 'CHAMADO'
     }).reverse() as Attendances[] | null | undefined
-
-    console.log(Boolean(filterListOfAttendanceHistory))
 
     if (loading) return <p className="text-xl text-center pt-8">Carregando lista de atendimentos...</p>
     if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
         <>
-
             <Header />
             <main className="grid grid-cols-[1fr_auto] justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
                 <section className="flex flex-col gap-4 overflow-x-auto w-full">
@@ -113,12 +110,12 @@ export function AccessScreen() {
                     <div className="flex flex-col gap-8">
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Último</h3>
-                            <p className="text-lg">{filterListOfAttendanceHistory && filterListOfAttendanceHistory[0]?.name}</p>
+                            <p className="text-lg">{filteredListOfAttendanceHistory && filteredListOfAttendanceHistory[0]?.name}</p>
                         </div>
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Anteriores</h3>
                             <ul>
-                                {filterListOfAttendanceHistory?.map((attendance, index) => {
+                                {filteredListOfAttendanceHistory?.map((attendance, index) => {
                                     if (index !== 0)
                                         return <li className="text-lg" key={attendance.id}>{attendance.name}</li>
                                 })}

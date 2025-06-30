@@ -36,6 +36,33 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         })
     }
 
+    const handleCallAttendance = async (attendance: Attendances) => {
+        const { id } = attendance
+        try {
+            await api.patch(`/tickets/${id}/status`, {
+                status: 'CHAMADO'
+            })
+            setRequestState((prevValues) => {
+                if (!prevValues.attendances) return prevValues
+
+                const updatedAttendances = prevValues.attendances?.map((attendance) => {
+                    return attendance.id === id ? { ...attendance, status: 'CHAMADO' } : attendance
+                })
+                return {
+                    ...prevValues,
+                    attendances: updatedAttendances
+                }
+            })
+            setIsModalOpen(true) // isso deve ser chamado antes da requisição
+            setStoredValue(attendance)
+        } catch (error) {
+            const { response } = error as AxiosError<{ message: string }>
+            toast.error('Error', {
+                description: response?.data.message || 'Erro desconhecido'
+            })
+        }
+    }
+
     const handleStartAttendance = async (attendance: Attendances) => {
         const { id } = attendance
         try {
@@ -69,22 +96,43 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         try {
             if (status === 'AGUARDANDO') throw new Error('Não é possível finalizar um atendimento que está em espera')
 
-            await api.patch(`/tickets/${id}/status`, {
-                status: 'ATENDIDO'
-            })
-            setRequestState((prevValues) => {
-                if (!prevValues.attendances) return prevValues
-                const updatedAttendances = prevValues.attendances?.filter((attendance) =>
-                    attendance.id !== id
-                )
-                return {
-                    ...prevValues,
-                    attendances: updatedAttendances
-                }
-            })
-            toast.info('Atendimento Finalizado', {
-                description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
-            })
+            if (status === 'CHAMADO') {
+                await api.patch(`/tickets/${id}/status`, {
+                    status: 'AUSENTE'
+                })
+                setRequestState((prevValues) => {
+                    if (!prevValues.attendances) return prevValues
+                    const updatedAttendances = prevValues.attendances?.filter((attendance) =>
+                        attendance.id !== id
+                    )
+                    return {
+                        ...prevValues,
+                        attendances: updatedAttendances
+                    }
+                })
+                toast.warning('Chamado Encerrado', {
+                    description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number} está ausente`
+                })
+            }
+            if (status === 'EM ATENDIMENTO') {
+                await api.patch(`/tickets/${id}/status`, {
+                    status: 'ATENDIDO'
+                })
+                setRequestState((prevValues) => {
+                    if (!prevValues.attendances) return prevValues
+                    const updatedAttendances = prevValues.attendances?.filter((attendance) =>
+                        attendance.id !== id
+                    )
+                    return {
+                        ...prevValues,
+                        attendances: updatedAttendances
+                    }
+                })
+                toast.info('Atendimento Finalizado', {
+                    description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
+                })
+            }
+
             setStoredValue(null)
         } catch (error) {
             if (error instanceof AxiosError) {
@@ -146,7 +194,15 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                 </thead>
                 <tbody className="bg-gray-50 divide-y divide-gray-300">
                     {filteredAttendances?.map((attendance) => (
-                        <tr key={attendance.id} className={`*:px-6 *:py-4 *:text-lg ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}`}>
+                        <tr
+                            key={attendance.id}
+                            className={
+                                `*:px-6 *:py-4 *:text-lg 
+                                ${attendance.status === 'CHAMADO' && 'bg-amber-200'}
+                                ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}`
+                            }
+                        >
+
                             <td>{attendance.name}</td>
                             <td>{attendance.cpf ? attendance.cpf : '-/-'}</td>
                             <td>{attendance.service}</td>
@@ -155,9 +211,14 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             <td>{attendance.status}</td>
                             <td className="flex">
                                 <button
-                                    onClick={() => handleStartAttendance(attendance)}
+                                    onClick={() => handleCallAttendance(attendance)}
                                     className="cursor-pointer p-2">
                                     Chamar
+                                </button>
+                                <button
+                                    onClick={() => handleStartAttendance(attendance)}
+                                    className="cursor-pointer p-2">
+                                    Iniciar
                                 </button>
                                 <button
                                     onClick={() => handleEndAttendance(attendance)}
