@@ -38,7 +38,7 @@ export function FilterFields({ filters, setFilters }: FilterFieldsProps) {
                 value={searchByName}
                 onChange={handleSearchChange}
                 placeholder="Pesquise por um Nome..."
-                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                className="bg-gray-50 font-normal border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
             />
             <Select
                 id="services"
@@ -48,7 +48,7 @@ export function FilterFields({ filters, setFilters }: FilterFieldsProps) {
                 options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
                 onChange={handleSelectChange}
                 required
-                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                className="bg-gray-50 font-normal border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
             />
             <Select
                 id="queue"
@@ -58,7 +58,7 @@ export function FilterFields({ filters, setFilters }: FilterFieldsProps) {
                 options={[{ label: 'Todos os serviços', value: 'all' }, { label: 'PREFERENCIAL', value: 'P' }, { label: 'NORMAL', value: 'N' }]}
                 onChange={handleSelectChange}
                 required
-                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                className="bg-gray-50 font-normal border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
             />
             <Input
                 id="searchByTicket"
@@ -66,7 +66,7 @@ export function FilterFields({ filters, setFilters }: FilterFieldsProps) {
                 value={searchByTicket}
                 onChange={handleSearchChange}
                 placeholder="Pesquise por uma Senha..."
-                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                className="bg-gray-50 font-normal border-2 border-gray-800 p-2 rounded text-lg text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
             />
         </div>
     )

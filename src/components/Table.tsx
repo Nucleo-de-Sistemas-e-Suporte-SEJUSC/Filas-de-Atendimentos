@@ -53,7 +53,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     attendances: updatedAttendances
                 }
             })
-            setIsModalOpen(true)
+            setIsModalOpen(true) // isso deve ser chamado antes da requisição
             setStoredValue(attendance)
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
