@@ -86,6 +86,8 @@ export function AccessScreen() {
         return attendance.status !== 'AGUARDANDO'
     }).reverse() as Attendances[] | null | undefined
 
+    console.log(Boolean(filterListOfAttendanceHistory))
+
     if (loading) return <p className="text-xl text-center pt-8">Carregando lista de atendimentos...</p>
     if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
@@ -111,7 +113,7 @@ export function AccessScreen() {
                     <div className="flex flex-col gap-8">
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Último</h3>
-                            <p className="text-lg">{filterListOfAttendanceHistory && filterListOfAttendanceHistory[0].name}</p>
+                            <p className="text-lg">{filterListOfAttendanceHistory && filterListOfAttendanceHistory[0]?.name}</p>
                         </div>
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Anteriores</h3>
