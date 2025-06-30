@@ -94,8 +94,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         const { id, status } = attendance
 
         try {
-            if (status === 'AGUARDANDO') throw new Error('Não é possível finalizar um atendimento que está em espera')
-
             if (status === 'CHAMADO') {
                 await api.patch(`/tickets/${id}/status`, {
                     status: 'AUSENTE'
@@ -141,11 +139,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     description: response?.data.message || 'Erro desconhecido'
                 })
             }
-            if (error instanceof Error) {
-                toast.error('Error', {
-                    description: error.message || 'Erro desconhecido'
-                })
-            }
         }
     }
 
@@ -180,7 +173,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     </Modal>
                 )
             }
-            <table className="min-w-full text-left text-gray-700 overflow-hidden rounded-md">
+            <table className="text-center text-gray-700">
                 <thead className="bg-blue-950 text-white uppercase text-xl tracking-wider">
                     <tr className="*:px-6 *:py-4">
                         <th scope="col">Nome</th>
@@ -199,7 +192,8 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             className={
                                 `*:px-6 *:py-4 *:text-lg 
                                 ${attendance.status === 'CHAMADO' && 'bg-amber-200'}
-                                ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}`
+                                ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}
+                                ${attendance.status === 'AUSENTE' && 'bg-red-200'}`
                             }
                         >
 
@@ -210,21 +204,27 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             <td>{attendance.ticket_number}</td>
                             <td>{attendance.status}</td>
                             <td className="flex">
-                                <button
-                                    onClick={() => handleCallAttendance(attendance)}
-                                    className="cursor-pointer p-2">
-                                    Chamar
-                                </button>
-                                <button
-                                    onClick={() => handleStartAttendance(attendance)}
-                                    className="cursor-pointer p-2">
-                                    Iniciar
-                                </button>
-                                <button
-                                    onClick={() => handleEndAttendance(attendance)}
-                                    className="cursor-pointer p-2">
-                                    Finalizar
-                                </button>
+                                {attendance.status === 'AGUARDANDO' && (
+                                    <button
+                                        onClick={() => handleCallAttendance(attendance)}
+                                        className="cursor-pointer p-2">
+                                        Chamar
+                                    </button>
+                                )}
+                                {attendance.status === 'CHAMADO' && (
+                                    <>
+                                        <button
+                                            onClick={() => handleStartAttendance(attendance)}
+                                            className="cursor-pointer p-2">
+                                            Iniciar
+                                        </button>
+                                        <button
+                                            onClick={() => handleEndAttendance(attendance)}
+                                            className="cursor-pointer p-2">
+                                            Finalizar
+                                        </button>
+                                    </>
+                                )}
                             </td>
                         </tr>
                     ))}

@@ -93,16 +93,18 @@ export function AccessScreen() {
         <>
             <Header />
             <main className="grid grid-cols-[1fr_auto] justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
-                <section className="flex flex-col gap-4 overflow-x-auto w-full">
+                <section className="flex flex-col gap-4">
                     <FilterFields
                         filters={filters}
                         setFilters={setFilters}
                     />
-                    <Table
-                        filteredAttendances={filteredAttendances}
-                        setRequestState={setRequestState}
-                    />
-                    {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
+                    <div className="overflow-auto rounded">
+                        <Table
+                            filteredAttendances={filteredAttendances}
+                            setRequestState={setRequestState}
+                        />
+                        {filteredAttendances?.length === 0 && <p className="text-xl text-center pt-8">Nenhum Atendimento encontrado</p>}
+                    </div>
                 </section>
 
                 <section className="bg-gray-50 p-4 rounded ">

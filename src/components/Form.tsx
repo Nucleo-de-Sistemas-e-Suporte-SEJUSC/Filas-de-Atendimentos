@@ -120,7 +120,7 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
                 id="name"
                 label="Nome"
                 maxLength={50}
-                minLength={25}
+                minLength={20}
                 value={name}
                 onChange={handleNameChange}
                 placeholder="José da Silva Xavier"
