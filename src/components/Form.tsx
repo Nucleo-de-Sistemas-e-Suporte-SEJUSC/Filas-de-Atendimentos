@@ -25,10 +25,10 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
     const [formValues, setFormValues] = React.useState<FormValues>({
         cpf: '',
         name: '',
-        services: '',
-        fila: ''
+        service: '',
+        queue_type: ''
     })
-    const { cpf, name, services, fila } = formValues
+    const { cpf, name, service, queue_type } = formValues
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { name, value } = event.currentTarget
@@ -73,8 +73,13 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
             error: null
         }))
         try {
-            const response = await api.post('/generate-ticket', formValues)
-            const { ticket } = response.data
+            const { cpf, ...rest } = formValues
+            const payload = {
+                ...rest,
+                ...(cpf !== '' && { cpf })
+            }
+            const response = await api.post('/attendance', payload)
+            const ticket = response.data
 
             setRequestState((prevStates) => ({
                 ...prevStates,
@@ -85,8 +90,8 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
             setFormValues(() => ({
                 cpf: '',
                 name: '',
-                services: '',
-                fila: ''
+                service: '',
+                queue_type: ''
             }))
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
@@ -127,18 +132,18 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
                 required
             />
             <Select
-                id="services"
+                id="service"
                 label="Serviços"
-                value={services}
+                value={service}
                 optionLabel='Selecione um Serviço'
                 options={[{ label: 'PAV', value: 'PAV' }, { label: 'RCN', value: 'RCN' }]}
                 onChange={handleSelectChange}
                 required
             />
             <Select
-                id="fila"
+                id="queue_type"
                 label="Fila"
-                value={fila}
+                value={queue_type}
                 optionLabel='Selecione uma Fila'
                 options={[{ label: 'NORMAL', value: 'N' }, { label: 'PREFERENCIAL', value: 'P' }]}
                 onChange={handleSelectChange}

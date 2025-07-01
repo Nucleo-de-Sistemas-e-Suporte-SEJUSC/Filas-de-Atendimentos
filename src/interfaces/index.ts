@@ -1,25 +1,9 @@
-export interface Ticket {
-    cpf: string,
-    fila: string,
-    id: number,
-    name: string
-    services: string
-    ticket_number: string
-}
-
-export interface FormValues {
-    cpf: string
-    name: string
-    services: '' | 'RCN' | 'PAV'
-    fila: '' | 'NORMAL' | 'PREFERENCIAL'
-}
-
 export interface Attendances {
     id: number
     cpf: string
     name: string
-    service: string
-    queue_type: string
+    service: '' | 'RCN' | 'PAV'
+    queue_type: '' | 'N' | 'P'
     status: string
     ticket_number: string
 }
@@ -30,3 +14,6 @@ export interface Filters {
     services: string
     queue: string
 }
+
+export type FormValues = Pick<Attendances, 'cpf' | 'name' | 'service' | 'queue_type'>
+export type Ticket = Pick<Attendances, 'name' | 'ticket_number'>
