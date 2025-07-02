@@ -12,6 +12,7 @@ export interface Filters {
     searchByName: string
     searchByTicket: string
     services: string
+    status: string
     queue: string
 }
 

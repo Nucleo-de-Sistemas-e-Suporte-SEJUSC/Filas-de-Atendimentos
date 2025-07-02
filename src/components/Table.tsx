@@ -166,7 +166,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     </Modal>
                 )
             }
-            <table className="text-center text-gray-700">
+            <table className="text-center text-gray-700 min-w-full">
                 <thead className="bg-blue-950 text-white uppercase text-xl tracking-wider">
                     <tr className="*:px-6 *:py-4">
                         <th scope="col">Nome</th>

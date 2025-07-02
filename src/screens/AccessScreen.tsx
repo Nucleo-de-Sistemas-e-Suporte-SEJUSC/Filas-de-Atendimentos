@@ -22,11 +22,12 @@ export function AccessScreen() {
         searchByName: '',
         searchByTicket: '',
         services: '',
+        status: '',
         queue: ''
 
     })
-    const { searchByName, searchByTicket, services, queue } = filters
-    const { attendances, loading, error } = requestState
+    const { searchByName, searchByTicket, services, status, queue } = filters
+    const { attendances, loading } = requestState
 
     React.useEffect(() => {
         const fetchListOfAttendances = async () => {
@@ -73,6 +74,11 @@ export function AccessScreen() {
                 return attendance.service === services
             })
         }
+        if (status !== '' && status !== 'all') {
+            filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
+                return attendance.status === status
+            })
+        }
         if (queue !== '' && queue !== 'all') {
             filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
                 return attendance.queue_type === queue
@@ -91,8 +97,8 @@ export function AccessScreen() {
     return (
         <>
             <Header />
-            <main className="grid grid-cols-[1fr_auto] justify-items-center gap-8 mx-auto mt-24 max-w-max rounded p-8">
-                <section className="flex flex-col items-center gap-4">
+            <main className="grid grid-cols-[1fr_auto] justify-items-center gap-8 mx-auto mt-24 max-w-max p-8">
+                <section className="">
                     <FilterFields
                         filters={filters}
                         setFilters={setFilters}
