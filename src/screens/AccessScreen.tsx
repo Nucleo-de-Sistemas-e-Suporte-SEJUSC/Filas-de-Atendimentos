@@ -5,12 +5,12 @@ import {
     Table
 } from "@/components"
 import { api } from "@/api/axios"
-import type { Attendances, Filters } from "@/interfaces"
+import type { Attendance, Filters } from "@/interfaces"
 import type { AxiosError } from "axios"
 
 export function AccessScreen() {
     const [requestState, setRequestState] = React.useState<{
-        attendances: Attendances[] | null
+        attendances: Attendance[] | null
         loading: boolean
         error: string | null
     }>({
@@ -37,8 +37,8 @@ export function AccessScreen() {
             }))
 
             try {
-                const response = await api.get('/tickets')
-                const data = (await response.data) as Attendances[]
+                const response = await api.get('/attendance')
+                const data = (await response.data) as Attendance[]
                 setRequestState((prevVAlues) => ({
                     ...prevVAlues,
                     attendances: data
@@ -60,7 +60,7 @@ export function AccessScreen() {
     }, [])
 
     const filterListOfAttendances = () => {
-        let filteredListOfAttendances: Attendances[] | null | undefined = attendances
+        let filteredListOfAttendances: Attendance[] | null | undefined = attendances
 
         filteredListOfAttendances = filteredListOfAttendances?.filter((attendance) => {
             return attendance.name.includes(searchByName)
@@ -82,12 +82,11 @@ export function AccessScreen() {
     }
     const filteredAttendances = filterListOfAttendances()
 
-    const filteredListOfAttendanceHistory = attendances?.filter((attendance) => {
-        return attendance.status === 'CHAMADO'
-    }).reverse() as Attendances[] | null | undefined
+    const filteredListOfAttendanceHistory = (attendances ?? []).filter(
+        (attendance) => attendance.status === 'CHAMADO'
+    ).reverse();
 
     if (loading) return <p className="text-xl text-center pt-8">Carregando lista de atendimentos...</p>
-    if (error) return <p className="text-xl text-center pt-8">Erro desconhecido ocorreu</p>
 
     return (
         <>
@@ -112,9 +111,10 @@ export function AccessScreen() {
                     <div className="flex flex-col gap-8">
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Último</h3>
-                            <p className="text-lg">{filteredListOfAttendanceHistory && (
-                                `${filteredListOfAttendanceHistory[0]?.name} - ${filteredListOfAttendanceHistory[0]?.service}`
-                            )}
+                            <p className="text-lg">
+                                {filteredListOfAttendanceHistory.length !== 0 && (
+                                    `${filteredListOfAttendanceHistory[0].name} - ${filteredListOfAttendanceHistory[0].service}`
+                                )}
                             </p>
                         </div>
                         <div className="*:text-center">

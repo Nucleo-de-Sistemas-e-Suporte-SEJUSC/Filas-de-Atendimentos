@@ -3,43 +3,37 @@ import { Modal } from "./Modal"
 import { Select } from "./Select"
 import { Button } from "./Button"
 import { api } from "@/api/axios"
-import { useLocalStorage } from "@/hooks/useLocalStorage"
-import type { Attendances } from "@/interfaces"
+import type { Attendance } from "@/interfaces"
 import { AxiosError } from "axios"
 import { toast } from "sonner"
 
-type AttendancesWithGuiche = Attendances & {
-    guiche?: string
-}
-
 interface TableProps {
-    filteredAttendances: Attendances[] | undefined
+    filteredAttendances: Attendance[] | undefined
     setRequestState: React.Dispatch<React.SetStateAction<{
-        attendances: Attendances[] | null;
+        attendances: Attendance[] | null;
         loading: boolean;
         error: string | null;
     }>>
 }
 
 export function Table({ filteredAttendances, setRequestState }: TableProps) {
-    const { storedValue, setStoredValue } = useLocalStorage<AttendancesWithGuiche | null>('attendance', null)
-    const [isModalOpen, setIsModalOpen] = React.useState(false)
+    const [modalState, setModalState] = React.useState({
+        isOpen: false,
+        selectedGuiche: '',
+        selectedAttendance: null as Attendance | null
+    })
+    const { isOpen, selectedGuiche, selectedAttendance } = modalState
 
-    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const { value } = event.currentTarget
+    const handleCallAttendance = async () => {
+        if (!selectedAttendance) {
+            return
+        }
 
-        if (!storedValue) return
-        setStoredValue({
-            ...storedValue,
-            guiche: value
-        })
-    }
-
-    const handleCallAttendance = async (attendance: Attendances) => {
-        const { id } = attendance
+        const { id } = selectedAttendance
         try {
-            await api.patch(`/tickets/${id}/status`, {
-                status: 'CHAMADO'
+            await api.patch(`/attendance/${id}`, {
+                status: 'CHAMADO',
+                guiche: selectedGuiche
             })
             setRequestState((prevValues) => {
                 if (!prevValues.attendances) return prevValues
@@ -51,8 +45,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     attendances: updatedAttendances
                 }
             })
-            setIsModalOpen(true) // isso deve ser chamado antes da requisição
-            setStoredValue(attendance)
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
             toast.error('Error', {
@@ -61,16 +53,16 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         }
     }
 
-    const handleStartAttendance = async (attendance: Attendances) => {
+    const handleStartAttendance = async (attendance: Attendance) => {
         const { id } = attendance
         try {
-            await api.patch(`/tickets/${id}/status`, {
-                status: 'EM ATENDIMENTO'
+            await api.patch(`/attendance/${id}`, {
+                status: 'ATENDIMENTO'
             })
             setRequestState((prevValues) => {
                 if (!prevValues.attendances) return prevValues
                 const updatedAttendances = prevValues.attendances?.map((attendance) => {
-                    return attendance.id === id ? { ...attendance, status: 'EM ATENDIMENTO' } : attendance
+                    return attendance.id === id ? { ...attendance, status: 'ATENDIMENTO' } : attendance
                 })
                 return {
                     ...prevValues,
@@ -85,11 +77,11 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         }
     }
 
-    const handleEndAttendance = async (attendance: Attendances) => {
+    const handleEndAttendance = async (attendance: Attendance) => {
         const { id, status } = attendance
         try {
             if (status === 'CHAMADO') {
-                await api.patch(`/tickets/${id}/status`, {
+                await api.patch(`/attendance/${id}`, {
                     status: 'AUSENTE'
                 })
                 setRequestState((prevValues) => {
@@ -106,15 +98,15 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number} está ausente`
                 })
             }
-            if (status === 'EM ATENDIMENTO') {
-                await api.patch(`/tickets/${id}/status`, {
+            if (status === 'ATENDIMENTO') {
+                await api.patch(`/attendance/${id}`, {
                     status: 'ATENDIDO'
                 })
                 setRequestState((prevValues) => {
                     if (!prevValues.attendances) return prevValues
-                    const updatedAttendances = prevValues.attendances?.filter((attendance) =>
-                        attendance.id !== id
-                    )
+                    const updatedAttendances = prevValues.attendances?.map((attendance) => {
+                        return attendance.id === id ? { ...attendance, status: 'ATENDIDO' } : attendance
+                    })
                     return {
                         ...prevValues,
                         attendances: updatedAttendances
@@ -124,8 +116,6 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
                 })
             }
-
-            setStoredValue(null)
         } catch (error) {
             if (error instanceof AxiosError) {
                 const { response } = error as AxiosError<{ message: string }>
@@ -139,10 +129,16 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     return (
         <>
             {
-                isModalOpen && (
-                    <Modal onClick={() => setIsModalOpen(false)}>
-                        <div className="flex flex-col items-center">
-                            <span className="text-xl text-center pb-4">Selecione um guichê em que será realizado o atendimento</span>
+                isOpen && (
+                    <Modal onClick={() => setModalState((prevValues) => ({
+                        ...prevValues,
+                        isOpen
+                    }))}>
+                        <span className="text-xl text-center pb-4">Selecione um guichê em que será realizado o atendimento</span>
+                        <form
+                            onSubmit={handleCallAttendance}
+                            className="flex flex-col items-center gap-4"
+                        >
                             <Select
                                 id="guiche"
                                 optionLabel='Selecione um Guichê'
@@ -156,14 +152,17 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                                     { label: 'guichê 07', value: '07' },
                                     { label: 'guichê 08', value: '08' },
                                 ]}
-                                onChange={handleSelectChange}
+                                onChange={({ currentTarget }) => setModalState((prevValues) => ({
+                                    ...prevValues,
+                                    selectedGuiche: currentTarget.value
+                                }))}
                                 required
                                 className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
                             />
-                        </div>
-                        <Button onClick={() => setIsModalOpen(false)}>
-                            Fechar
-                        </Button>
+                            <Button>
+                                Chamar
+                            </Button>
+                        </form>
                     </Modal>
                 )
             }
@@ -186,8 +185,9 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             className={
                                 `*:px-6 *:py-4 *:text-lg 
                                 ${attendance.status === 'CHAMADO' && 'bg-amber-200'}
-                                ${attendance.status === 'EM ATENDIMENTO' && 'bg-lime-200'}
-                                ${attendance.status === 'AUSENTE' && 'bg-red-200'}`
+                                ${attendance.status === 'ATENDIMENTO' && 'bg-lime-200'}
+                                ${attendance.status === 'AUSENTE' && 'bg-red-200'}
+                                ${attendance.status === 'ATENDIDO' && 'bg-gray-300'}`
                             }
                         >
 
@@ -200,7 +200,11 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                             <td className="flex justify-center">
                                 {(attendance.status === 'AGUARDANDO' || attendance.status === 'AUSENTE') && (
                                     <button
-                                        onClick={() => handleCallAttendance(attendance)}
+                                        onClick={() => setModalState((prevValues) => ({
+                                            ...prevValues,
+                                            isOpen: true,
+                                            selectedAttendance: attendance
+                                        }))}
                                         className="cursor-pointer p-2">
                                         Chamar
                                     </button>
@@ -220,7 +224,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                                         </button>
                                     </>
                                 )}
-                                {attendance.status === 'EM ATENDIMENTO' && (
+                                {attendance.status === 'ATENDIMENTO' && (
                                     <button
                                         onClick={() => handleEndAttendance(attendance)}
                                         className="cursor-pointer p-2">
