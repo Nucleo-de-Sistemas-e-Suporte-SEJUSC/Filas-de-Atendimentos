@@ -6,6 +6,7 @@ export interface Attendance {
     queue_type: '' | 'N' | 'P'
     status: string
     ticket_number: string
+    guiche?: string
 }
 
 export interface Filters {

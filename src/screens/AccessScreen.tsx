@@ -113,7 +113,7 @@ export function AccessScreen() {
                 </section>
 
                 <section className="bg-gray-50 p-4 rounded ">
-                    <h2 className="text-4xl text-center font-semibold text-gray-800 pb-6">Histórico de Chamadas</h2>
+                    <h2 className="text-3xl text-center font-semibold text-gray-800 pb-6">Histórico de Chamadas</h2>
                     <div className="flex flex-col gap-8">
                         <div className="*:text-center">
                             <h3 className="text-2xl font-medium text-gray-800 pb-2">Último</h3>
