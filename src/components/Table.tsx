@@ -132,7 +132,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                 isOpen && (
                     <Modal onClick={() => setModalState((prevValues) => ({
                         ...prevValues,
-                        isOpen
+                        isOpen: false
                     }))}>
                         <span className="text-xl text-center pb-4">Selecione um guichê em que será realizado o atendimento</span>
                         <form
