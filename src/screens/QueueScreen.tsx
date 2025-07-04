@@ -47,7 +47,6 @@ export function QueueScreen() {
 
         const intervalAttendance = setInterval(() => {
             fetchListOfAttendances()
-            console.log('ocorreu')
         }, 10000)
 
         return () => clearInterval(intervalAttendance)

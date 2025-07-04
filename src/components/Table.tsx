@@ -20,9 +20,10 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     const [modalState, setModalState] = React.useState({
         isOpen: false,
         selectedGuiche: '',
-        selectedAttendance: null as Attendance | null
+        selectedAttendance: null as Attendance | null,
+        confirmAttendance: false
     })
-    const { isOpen, selectedGuiche, selectedAttendance } = modalState
+    const { isOpen, selectedGuiche, selectedAttendance, confirmAttendance } = modalState
 
     const handleCallAttendance = async () => {
         if (!selectedAttendance) {
@@ -134,35 +135,67 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                         ...prevValues,
                         isOpen: false
                     }))}>
-                        <span className="text-xl text-center pb-4">Selecione um guichê em que será realizado o atendimento</span>
-                        <form
-                            onSubmit={handleCallAttendance}
-                            className="flex flex-col items-center gap-4"
-                        >
-                            <Select
-                                id="guiche"
-                                optionLabel='Selecione um Guichê'
-                                options={[
-                                    { label: 'guichê 01', value: '01' },
-                                    { label: 'guichê 02', value: '02' },
-                                    { label: 'guichê 03', value: '03' },
-                                    { label: 'guichê 04', value: '04' },
-                                    { label: 'guichê 05', value: '05' },
-                                    { label: 'guichê 06', value: '06' },
-                                    { label: 'guichê 07', value: '07' },
-                                    { label: 'guichê 08', value: '08' },
-                                ]}
-                                onChange={({ currentTarget }) => setModalState((prevValues) => ({
-                                    ...prevValues,
-                                    selectedGuiche: currentTarget.value
-                                }))}
-                                required
-                                className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
-                            />
-                            <Button>
-                                Chamar
-                            </Button>
-                        </form>
+
+                        {
+                            confirmAttendance ? (
+                                <>
+                                    <span className="text-xl text-center pb-4">Confirme a ação para mudar o status do beneficiário como AUSENTE</span>
+                                    <form
+                                        onSubmit={() => handleEndAttendance(selectedAttendance!)}
+                                        className="flex flex-col items-center gap-4"
+                                    >
+                                        <Select
+                                            id="confirm"
+                                            optionLabel='-/-'
+                                            options={[
+                                                { label: 'Confirmar', value: 'Confirmar' },
+                                            ]}
+                                            onChange={() => setModalState((prevValues) => ({
+                                                ...prevValues,
+                                                confirmEndAttendance: true
+                                            }))}
+                                            required
+                                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                                        />
+                                        <Button>
+                                            Finalizar
+                                        </Button>
+                                    </form>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="text-xl text-center pb-4">Selecione um guichê em que será realizado o atendimento</span>
+                                    <form
+                                        onSubmit={handleCallAttendance}
+                                        className="flex flex-col items-center gap-4"
+                                    >
+                                        <Select
+                                            id="guiche"
+                                            optionLabel='Selecione um Guichê'
+                                            options={[
+                                                { label: 'guichê 01', value: '01' },
+                                                { label: 'guichê 02', value: '02' },
+                                                { label: 'guichê 03', value: '03' },
+                                                { label: 'guichê 04', value: '04' },
+                                                { label: 'guichê 05', value: '05' },
+                                                { label: 'guichê 06', value: '06' },
+                                                { label: 'guichê 07', value: '07' },
+                                                { label: 'guichê 08', value: '08' },
+                                            ]}
+                                            onChange={({ currentTarget }) => setModalState((prevValues) => ({
+                                                ...prevValues,
+                                                selectedGuiche: currentTarget.value
+                                            }))}
+                                            required
+                                            className="bg-gray-50 border-2 border-gray-800 p-2 rounded text-xl text-gray-800 focus:border-blue-800 focus:shadow-md ease-in duration-200 outline-none"
+                                        />
+                                        <Button>
+                                            Chamar
+                                        </Button>
+                                    </form>
+                                </>
+                            )
+                        }
                     </Modal>
                 )
             }
@@ -218,7 +251,12 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                                             Iniciar
                                         </button>
                                         <button
-                                            onClick={() => handleEndAttendance(attendance)}
+                                            onClick={() => setModalState((prevValues) => ({
+                                                ...prevValues,
+                                                isOpen: true,
+                                                selectedAttendance: attendance,
+                                                confirmAttendance: true
+                                            }))}
                                             className="cursor-pointer p-2">
                                             Finalizar
                                         </button>
