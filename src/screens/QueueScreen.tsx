@@ -44,14 +44,37 @@ export function QueueScreen() {
             }
         }
         fetchListOfAttendances()
+
+        const intervalAttendance = setInterval(() => {
+            fetchListOfAttendances()
+            console.log('ocorreu')
+        }, 10000)
+
+        return () => clearInterval(intervalAttendance)
     }, [])
 
     const filteredListOfAttendanceHistory = (attendances ?? []).filter(
         (attendance) => attendance.status === 'CHAMADO'
     ).reverse();
 
-    if (!attendances) {
-        return <p className="text-xl text-center pt-8">Nenhum atendimento foi iniciado</p>
+    const speakName = (name: string) => {
+        const utterance = new SpeechSynthesisUtterance(name);
+        utterance.lang = 'pt-BR'; // Pode ser 'en-US', 'pt-BR', etc.
+        utterance.rate = 0.8;       // Velocidade da fala (1 é normal)
+        utterance.pitch = 1;      // Tom da voz
+        speechSynthesis.speak(utterance);
+    }
+
+    React.useEffect(() => {
+        if (filteredListOfAttendanceHistory.length > 0) {
+            setTimeout(() => {
+                speakName(filteredListOfAttendanceHistory[0].name);
+            }, 1000);
+        }
+    }, [filteredListOfAttendanceHistory]);
+
+    if (filteredListOfAttendanceHistory.length === 0) {
+        return <p className="text-7xl font-bold text-center pt-20">Nenhum atendimento foi chamado</p>
     }
 
     return (
@@ -59,12 +82,10 @@ export function QueueScreen() {
             <div className="flex flex-col gap-8 bg-gray-50 p-8 shadow-md rounded">
                 <div className="*:text-center *:font-bold *:pb-6 *:text-7xl">
                     <h1>
-                        {filteredListOfAttendanceHistory.length !== 0 && (
-                            `${filteredListOfAttendanceHistory[0].name}`
-                        )}
+                        {`${filteredListOfAttendanceHistory[0].name}`}
                     </h1>
                     <h2>{filteredListOfAttendanceHistory[0].ticket_number}</h2>
-                    <h3>Guichê: {attendances[0].guiche}</h3>
+                    <h3>Guichê: {filteredListOfAttendanceHistory[0].guiche}</h3>
                 </div>
             </div>
             <div className="flex flex-col items-center gap-8 bg-gray-50 p-8 shadow-md rounded">
@@ -72,11 +93,8 @@ export function QueueScreen() {
                 <ul className="*:text-center *:text-2xl">
                     {filteredListOfAttendanceHistory?.map((attendance, index) => {
                         if (index !== 0) {
-
                             return (
-                                <>
-                                    <li key={attendance.id}>{attendance.ticket_number}</li>
-                                </>
+                                <li key={attendance.id}>{attendance.ticket_number}</li>
                             )
                         }
                     })}

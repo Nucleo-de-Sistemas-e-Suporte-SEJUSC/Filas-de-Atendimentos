@@ -73,12 +73,7 @@ export function Form({ setRequestState, setIsModalOpen, loading }: FormProps) {
             error: null
         }))
         try {
-            const { cpf, ...rest } = formValues
-            const payload = {
-                ...rest,
-                ...(cpf !== '' && { cpf })
-            }
-            const response = await api.post('/attendance', payload)
+            const response = await api.post('/attendance', formValues)
             const ticket = response.data
 
             setRequestState((prevStates) => ({
