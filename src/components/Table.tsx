@@ -31,9 +31,10 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
             return
         }
 
-        const { id } = selectedAttendance
+        const { id, status } = selectedAttendance
         try {
             await api.patch(`/attendance/${id}`, {
+                prevStatus: status,
                 status: 'CHAMADO',
                 guiche: selectedGuiche
             })
@@ -60,9 +61,10 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     }
 
     const handleStartAttendance = async (attendance: Attendance) => {
-        const { id } = attendance
+        const { id, status } = attendance
         try {
             await api.patch(`/attendance/${id}`, {
+                prevStatus: status,
                 status: 'ATENDIMENTO'
             })
             setRequestState((prevValues) => {
@@ -86,9 +88,11 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     const handleEndAttendance = async (attendance: Attendance, event?: React.FormEvent) => {
         event?.preventDefault()
         const { id, status } = attendance
-        try {
-            if (status === 'CHAMADO') {
+
+        if (status === 'CHAMADO') {
+            try {
                 await api.patch(`/attendance/${id}`, {
+                    prevStatus: status,
                     status: 'AUSENTE'
                 })
                 setRequestState((prevValues) => {
@@ -111,9 +115,17 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                 toast.warning('Chamado Encerrado', {
                     description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number} está ausente`
                 })
+            } catch (error) {
+                const { response } = error as AxiosError<{ message: string }>
+                toast.error('Error', {
+                    description: response?.data.message || 'Erro desconhecido'
+                })
             }
-            if (status === 'ATENDIMENTO') {
+        }
+        if (status === 'ATENDIMENTO') {
+            try {
                 await api.patch(`/attendance/${id}`, {
+                    prevStatus: status,
                     status: 'ATENDIDO'
                 })
                 setRequestState((prevValues) => {
@@ -129,9 +141,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                 toast.info('Atendimento Finalizado', {
                     description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number}`
                 })
-            }
-        } catch (error) {
-            if (error instanceof AxiosError) {
+            } catch (error) {
                 const { response } = error as AxiosError<{ message: string }>
                 toast.error('Error', {
                     description: response?.data.message || 'Erro desconhecido'
