@@ -25,7 +25,8 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
     })
     const { isOpen, selectedGuiche, selectedAttendance, confirmAttendance } = modalState
 
-    const handleCallAttendance = async () => {
+    const handleCallAttendance = async (event: React.FormEvent) => {
+        event.preventDefault()
         if (!selectedAttendance) {
             return
         }
@@ -46,6 +47,10 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                     attendances: updatedAttendances
                 }
             })
+            setModalState((prevValues) => ({
+                ...prevValues,
+                isOpen: false
+            }))
         } catch (error) {
             const { response } = error as AxiosError<{ message: string }>
             toast.error('Error', {
@@ -78,7 +83,8 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
         }
     }
 
-    const handleEndAttendance = async (attendance: Attendance) => {
+    const handleEndAttendance = async (attendance: Attendance, event?: React.FormEvent) => {
+        event?.preventDefault()
         const { id, status } = attendance
         try {
             if (status === 'CHAMADO') {
@@ -95,6 +101,13 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                         attendances: updatedAttendances
                     }
                 })
+
+                if (event) {
+                    setModalState((prevValues) => ({
+                        ...prevValues,
+                        isOpen: false
+                    }))
+                }
                 toast.warning('Chamado Encerrado', {
                     description: `Beneficiário: ${attendance.name} Senha: ${attendance.ticket_number} está ausente`
                 })
@@ -141,7 +154,7 @@ export function Table({ filteredAttendances, setRequestState }: TableProps) {
                                 <>
                                     <span className="text-xl text-center pb-4">Confirme a ação para mudar o status do beneficiário como AUSENTE</span>
                                     <form
-                                        onSubmit={() => handleEndAttendance(selectedAttendance!)}
+                                        onSubmit={(event) => handleEndAttendance(selectedAttendance!, event)}
                                         className="flex flex-col items-center gap-4"
                                     >
                                         <Select
