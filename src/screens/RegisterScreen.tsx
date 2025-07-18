@@ -8,6 +8,7 @@ import {
 import type {
     Ticket,
 } from '@/interfaces'
+import siaf from "@/assets/siaf.png"
 
 export function RegisterScreen() {
     const [isModalOpen, setIsModalOpen] = React.useState(false)
@@ -42,7 +43,7 @@ export function RegisterScreen() {
 
             <main className="flex flex-col items-center gap-8 bg-gray-50 mx-auto mt-16 max-w-2xl shadow-md p-8 rounded">
                 <section className="*:text-center flex flex-col items-center gap-2 max-w-md">
-                    <img className="max-w-2xs" src="./src/assets/siaf.png" alt="SEJUSC" />
+                    <img className="max-w-2xs" src={siaf} alt="SEJUSC" />
                     <p className="text-base font-medium text-gray-600">Preencha os campos abaixo para gerar uma senha para o seu Atendimento</p>
                 </section>
 
