@@ -1,10 +1,11 @@
 import { Link } from "react-router";
+import logo from "@/assets/sejusc.png"
 
 export function Header() {
     return (
         <header className="flex justify-between items-center p-8 bg-gray-50 shadow-md">
             <Link to="/" className="max-w-32">
-                <img src="./src/assets/sejusc.png" alt="SEJUSC" />
+                <img src={logo} alt="SEJUSC" />
             </Link>
 
             <nav className="flex gap-6 *:text-blue-950 *:font-semibold *:tracking-wider *:text-2xl *:p-2">
