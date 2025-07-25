@@ -24,7 +24,7 @@ export function RegisterScreen() {
     const { ticket, loading } = requestState
 
     return (
-        <>
+        <div className="bg-[url(./assets/background.png)] bg-center bg-cover bg-no-repeat h-screen">
             {
                 isModalOpen && (
                     <Modal onClick={() => setIsModalOpen(false)}>
@@ -53,6 +53,6 @@ export function RegisterScreen() {
                     loading={loading}
                 />
             </main>
-        </>
+        </div>
     )
 }
